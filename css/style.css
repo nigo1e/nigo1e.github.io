@@ -180,7 +180,6 @@ a {
 .post-content h4::before,
 .post-content h5::before,
 .post-content h6::before {
-  content: "#";
   padding-right: 10px;
   color: #6d9ee7;
 }
@@ -726,6 +725,19 @@ a {
   padding: 0.2em 0.4em;
   color: #fff;
   vertical-align: text-top;
+}
+.post-content pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.45;
+}
+.post-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
 }
 .post-content pre {
   word-wrap: normal;
