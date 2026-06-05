@@ -155,7 +155,27 @@
 <hr>
 <h2 id="三、Agentic-Loop-核心机制"><a href="#三、Agentic-Loop-核心机制" class="headerlink" title="三、Agentic Loop 核心机制"></a>三、Agentic Loop 核心机制</h2><p>Agentic Loop 是 Claude Code 实现 AI 自主多轮执行的核心机制，源码级实现位于 <code>src/query.ts</code> 的 <code>queryLoop()</code> 异步生成器函数中。</p>
 <h3 id="3-1-循环完整执行流程"><a href="#3-1-循环完整执行流程" class="headerlink" title="3.1 循环完整执行流程"></a>3.1 循环完整执行流程</h3><p>每次迭代包含 4 个标准阶段：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">阶段1: 上下文预处理<br>  原始 messagesForQuery<br>    ↓ applyToolResultBudget()    — 工具结果预算截断<br>    ↓ snipCompactIfNeeded()      — 历史Snip压缩<br>    ↓ microcompact()             — 微压缩<br>    ↓ applyCollapsesIfNeeded()   — 上下文折叠<br>    ↓ autocompact()             — 自动压缩<br>  → 处理后的 messagesForQuery → 发往API<br><br>阶段2: 流式API调用<br>  通过 deps.callModel() 发起流式请求<br>  收集 assistantMessages[]、toolUseBlocks[]<br><br>阶段3: 工具执行<br>  StreamingToolExecutor（并行执行）或 runTools（串行执行）<br>  生成 toolResults[]<br><br>阶段4: 终止/继续判定<br>  通过 needsFollowUp 判定是否需要继续循环<br></code></pre></td></tr></table></figure>
+<pre><code class="hljs language-plaintext">
+阶段1: 上下文预处理
+  原始 messagesForQuery
+    ↓ applyToolResultBudget()    — 工具结果预算截断
+    ↓ snipCompactIfNeeded()      — 历史Snip压缩
+    ↓ microcompact()             — 微压缩
+    ↓ applyCollapsesIfNeeded()   — 上下文折叠
+    ↓ autocompact()             — 自动压缩
+  → 处理后的 messagesForQuery → 发往API
+
+阶段2: 流式API调用
+  通过 deps.callModel() 发起流式请求
+  收集 assistantMessages[]、toolUseBlocks[]
+
+阶段3: 工具执行
+  StreamingToolExecutor（并行执行）或 runTools（串行执行）
+  生成 toolResults[]
+
+阶段4: 终止/继续判定
+  通过 needsFollowUp 判定是否需要继续循环
+</code></pre>
 
 <h3 id="3-2-循环终止条件（9种）"><a href="#3-2-循环终止条件（9种）" class="headerlink" title="3.2 循环终止条件（9种）"></a>3.2 循环终止条件（9种）</h3><table>
 <thead>
@@ -328,7 +348,18 @@
 <li><strong>Feature-flag工具</strong>：按功能开关添加</li>
 <li><strong>Ant-only工具</strong>：仅内部环境可用</li>
 </ol>
-<h3 id="5-3-工具调用完整链路（10步）"><a href="#5-3-工具调用完整链路（10步）" class="headerlink" title="5.3 工具调用完整链路（10步）"></a>5.3 工具调用完整链路（10步）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">1. 大模型API返回 tool_use block<br>2. StreamingToolExecutor.addTool() / runTools() 接收请求<br>3. findToolByName() 查找工具实例<br>4. validateInput() 做输入校验<br>5. canUseTool() 触发权限UI（如Ask模式确认弹窗）<br>6. checkPermissions() 做权限规则匹配<br>7. 执行工具 call() 方法<br>8. 返回 ToolResult&lt;Output&gt;<br>9. mapToolResultToToolResultBlockParam() 转换格式<br>10. 消息追加到上下文，进入下一轮<br></code></pre></td></tr></table></figure>
+<h3 id="5-3-工具调用完整链路（10步）"><a href="#5-3-工具调用完整链路（10步）" class="headerlink" title="5.3 工具调用完整链路（10步）"></a>5.3 工具调用完整链路（10步）</h3><pre><code class="hljs language-plaintext">
+1. 大模型API返回 tool_use block
+2. StreamingToolExecutor.addTool() / runTools() 接收请求
+3. findToolByName() 查找工具实例
+4. validateInput() 做输入校验
+5. canUseTool() 触发权限UI（如Ask模式确认弹窗）
+6. checkPermissions() 做权限规则匹配
+7. 执行工具 call() 方法
+8. 返回 ToolResult&lt;Output&gt;
+9. mapToolResultToToolResultBlockParam() 转换格式
+10. 消息追加到上下文，进入下一轮
+</code></pre>
 
 <h3 id="5-4-50-内置工具分类"><a href="#5-4-50-内置工具分类" class="headerlink" title="5.4 50+ 内置工具分类"></a>5.4 50+ 内置工具分类</h3><table>
 <thead>
@@ -436,7 +467,12 @@
 <td>所有操作自动放行</td>
 </tr>
 </tbody></table>
-<h3 id="6-4-死循环防护"><a href="#6-4-死循环防护" class="headerlink" title="6.4 死循环防护"></a>6.4 死循环防护</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">DENIAL_LIMITS</span> = &#123;<br>  <span class="hljs-attr">maxConsecutive</span>: <span class="hljs-number">3</span>,   <span class="hljs-comment">// 同一工具连续拒绝上限</span><br>  <span class="hljs-attr">maxTotal</span>: <span class="hljs-number">20</span>,        <span class="hljs-comment">// 总拒绝次数上限</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="6-4-死循环防护"><a href="#6-4-死循环防护" class="headerlink" title="6.4 死循环防护"></a>6.4 死循环防护</h3><pre><code class="hljs language-typescript">
+const DENIAL_LIMITS = &#123;
+  maxConsecutive: 3,   // 同一工具连续拒绝上限
+  maxTotal: 20,        // 总拒绝次数上限
+&#125;
+</code></pre>
 
 <hr>
 <h2 id="七、扩展性系统"><a href="#七、扩展性系统" class="headerlink" title="七、扩展性系统"></a>七、扩展性系统</h2><h3 id="7-1-Hook-生命周期钩子（27种事件）"><a href="#7-1-Hook-生命周期钩子（27种事件）" class="headerlink" title="7.1 Hook 生命周期钩子（27种事件）"></a>7.1 Hook 生命周期钩子（27种事件）</h3><table>
@@ -591,7 +627,20 @@
 <td>调用方内部消费</td>
 </tr>
 </tbody></table>
-<h3 id="8-2-Agent-Definition-字段"><a href="#8-2-Agent-Definition-字段" class="headerlink" title="8.2 Agent Definition 字段"></a>8.2 Agent Definition 字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">name:</span> <span class="hljs-string">code-reviewer</span><br><span class="hljs-attr">description:</span> <span class="hljs-string">系统性代码审查</span><br><span class="hljs-attr">tools:</span> [<span class="hljs-string">Read</span>, <span class="hljs-string">Grep</span>, <span class="hljs-string">Glob</span>]<br><span class="hljs-attr">disallowedTools:</span> [<span class="hljs-string">Write</span>, <span class="hljs-string">Bash</span>]<br><span class="hljs-attr">prompt:</span> <span class="hljs-string">You</span> <span class="hljs-string">are</span> <span class="hljs-string">a</span> <span class="hljs-string">focused</span> <span class="hljs-string">reviewer...</span><br><span class="hljs-attr">model:</span> <span class="hljs-string">sonnet</span><br><span class="hljs-attr">effort:</span> <span class="hljs-string">medium</span><br><span class="hljs-attr">permissionMode:</span> <span class="hljs-string">acceptEdits</span><br><span class="hljs-attr">background:</span> <span class="hljs-literal">true</span><br><span class="hljs-attr">isolation:</span> <span class="hljs-string">worktree</span><br><span class="hljs-attr">maxTurns:</span> <span class="hljs-number">8</span><br><span class="hljs-attr">memory:</span> <span class="hljs-string">project</span><br></code></pre></td></tr></table></figure>
+<h3 id="8-2-Agent-Definition-字段"><a href="#8-2-Agent-Definition-字段" class="headerlink" title="8.2 Agent Definition 字段"></a>8.2 Agent Definition 字段</h3><pre><code class="hljs language-yaml">
+name: code-reviewer
+description: 系统性代码审查
+tools: [Read, Grep, Glob]
+disallowedTools: [Write, Bash]
+prompt: You are a focused reviewer...
+model: sonnet
+effort: medium
+permissionMode: acceptEdits
+background: true
+isolation: worktree
+maxTurns: 8
+memory: project
+</code></pre>
 
 <h3 id="8-3-Worktree-隔离"><a href="#8-3-Worktree-隔离" class="headerlink" title="8.3 Worktree 隔离"></a>8.3 Worktree 隔离</h3><p>使用 git worktree 实现文件级隔离：</p>
 <ul>
@@ -599,9 +648,19 @@
 <li>清理：无变更则移除；有变更则保留并返回路径</li>
 </ul>
 <hr>
-<h2 id="九、System-Prompt-动态组装"><a href="#九、System-Prompt-动态组装" class="headerlink" title="九、System Prompt 动态组装"></a>九、System Prompt 动态组装</h2><h3 id="9-1-三阶段处理管道"><a href="#9-1-三阶段处理管道" class="headerlink" title="9.1 三阶段处理管道"></a>9.1 三阶段处理管道</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">getSystemPrompt()              →  string[]<br>  ↓<br>buildEffectiveSystemPrompt()   →  SystemPrompt<br>  ↓<br>buildSystemPromptBlocks()      →  TextBlockParam[]<br></code></pre></td></tr></table></figure>
+<h2 id="九、System-Prompt-动态组装"><a href="#九、System-Prompt-动态组装" class="headerlink" title="九、System Prompt 动态组装"></a>九、System Prompt 动态组装</h2><h3 id="9-1-三阶段处理管道"><a href="#9-1-三阶段处理管道" class="headerlink" title="9.1 三阶段处理管道"></a>9.1 三阶段处理管道</h3><pre><code class="hljs language-plaintext">
+getSystemPrompt()              →  string[]
+  ↓
+buildEffectiveSystemPrompt()   →  SystemPrompt
+  ↓
+buildSystemPromptBlocks()      →  TextBlockParam[]
+</code></pre>
 
-<h3 id="9-2-静态区与动态区分界"><a href="#9-2-静态区与动态区分界" class="headerlink" title="9.2 静态区与动态区分界"></a>9.2 静态区与动态区分界</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">[静态内容]                    → cacheScope: &#x27;global&#x27;（全局缓存）<br>__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__<br>[动态内容]                    → cacheScope: &#x27;org&#x27; 或不缓存<br></code></pre></td></tr></table></figure>
+<h3 id="9-2-静态区与动态区分界"><a href="#9-2-静态区与动态区分界" class="headerlink" title="9.2 静态区与动态区分界"></a>9.2 静态区与动态区分界</h3><pre><code class="hljs language-plaintext">
+[静态内容]                    → cacheScope: 'global'（全局缓存）
+__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__
+[动态内容]                    → cacheScope: 'org' 或不缓存
+</code></pre>
 
 <h3 id="9-3-五级优先级选择"><a href="#9-3-五级优先级选择" class="headerlink" title="9.3 五级优先级选择"></a>9.3 五级优先级选择</h3><table>
 <thead>
@@ -637,7 +696,11 @@
 <td>无特殊条件</td>
 </tr>
 </tbody></table>
-<h3 id="9-4-CLAUDE-md-多级合并"><a href="#9-4-CLAUDE-md-多级合并" class="headerlink" title="9.4 CLAUDE.md 多级合并"></a>9.4 CLAUDE.md 多级合并</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">~/.claude/CLAUDE.md          ← 用户全局<br>  └── /project/CLAUDE.md     ← 项目根目录<br>        └── /project/src/CLAUDE.md  ← 子目录<br></code></pre></td></tr></table></figure>
+<h3 id="9-4-CLAUDE-md-多级合并"><a href="#9-4-CLAUDE-md-多级合并" class="headerlink" title="9.4 CLAUDE.md 多级合并"></a>9.4 CLAUDE.md 多级合并</h3><pre><code class="hljs language-plaintext">
+~/.claude/CLAUDE.md          ← 用户全局
+  └── /project/CLAUDE.md     ← 项目根目录
+        └── /project/src/CLAUDE.md  ← 子目录
+</code></pre>
 
 <hr>
 <h2 id="十、核心技术指标"><a href="#十、核心技术指标" class="headerlink" title="十、核心技术指标"></a>十、核心技术指标</h2><table>

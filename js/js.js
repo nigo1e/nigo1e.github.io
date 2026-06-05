@@ -11,10 +11,7 @@ new Valine({
 })
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('pre code').forEach((block) => {
-        if (block.closest('figure.highlight') || block.classList.contains('hljs')) {
-            return;
-        }
+    document.querySelectorAll('pre').forEach((block) => {
         hljs.highlightBlock(block);
     });
 });
