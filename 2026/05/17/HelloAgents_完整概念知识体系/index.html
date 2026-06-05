@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google-site-verification" content="TZE0rZyIqLl10trYu3BWBWa1Vmz6HFwhb2OcNEK4u-s" />
+     <link rel="shortcut icon" href= /img/huo.png >
+    <title>
+        Blog
+    </title>
+    <meta name="description" content=  >
+    <meta name="keywords" content=  >
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-home
+ replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            Hello-Agents 完整概念性知识体系
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <h1 id="Hello-Agents-完整概念性知识体系"><a href="#Hello-Agents-完整概念性知识体系" class="headerlink" title="Hello-Agents 完整概念性知识体系"></a>Hello-Agents 完整概念性知识体系</h1><p><strong>文档来源</strong>：《Hello-Agents》—— 从零开始构建智能体（Datawhale 社区开源教程）<br><strong>GitHub</strong>: 50.3k+ Stars, 6.1k+ Forks<br><strong>在线阅读</strong>: <a target="_blank" rel="noopener" href="https://hello-agents.datawhale.cc/">https://hello-agents.datawhale.cc</a><br><strong>文档范围</strong>: 全部 16 章节（第一部分～第五部分）<br><strong>生成时间</strong>: 2026-05-17</p>
+<hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%E6%99%BA%E8%83%BD%E4%BD%93%E4%B8%8E%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80">第一部分：智能体与语言模型基础</a><ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%88%9D%E8%AF%86%E6%99%BA%E8%83%BD%E4%BD%93">第一章 初识智能体</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E6%99%BA%E8%83%BD%E4%BD%93%E5%8F%91%E5%B1%95%E5%8F%B2">第二章 智能体发展史</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%9F%BA%E7%A1%80">第三章 大语言模型基础</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%E6%9E%84%E5%BB%BA%E4%BD%A0%E7%9A%84%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E6%99%BA%E8%83%BD%E4%BD%93">第二部分：构建你的大语言模型智能体</a><ul>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%99%BA%E8%83%BD%E4%BD%93%E7%BB%8F%E5%85%B8%E8%8C%83%E5%BC%8F%E6%9E%84%E5%BB%BA">第四章 智能体经典范式构建</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BD%8E%E4%BB%A3%E7%A0%81%E5%B9%B3%E5%8F%B0%E7%9A%84%E6%99%BA%E8%83%BD%E4%BD%93%E6%90%AD%E5%BB%BA">第五章 基于低代码平台的智能体搭建</a></li>
+<li><a href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5">第六章 框架开发实践</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E6%9E%84%E5%BB%BA%E4%BD%A0%E7%9A%84agent%E6%A1%86%E6%9E%B6">第七章 构建你的Agent框架</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%E9%AB%98%E7%BA%A7%E7%9F%A5%E8%AF%86%E6%89%A9%E5%B1%95">第三部分：高级知识扩展</a><ul>
+<li><a href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E8%AE%B0%E5%BF%86%E4%B8%8E%E6%A3%80%E7%B4%A2">第八章 记忆与检索</a></li>
+<li><a href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B">第九章 上下文工程</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E7%AB%A0-%E6%99%BA%E8%83%BD%E4%BD%93%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE">第十章 智能体通信协议</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-agentic-rl">第十一章 Agentic-RL</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E6%99%BA%E8%83%BD%E4%BD%93%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0">第十二章 智能体性能评估</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%E7%BB%BC%E5%90%88%E6%A1%88%E4%BE%8B%E8%BF%9B%E9%98%B6">第四部分：综合案例进阶</a><ul>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0-%E6%99%BA%E8%83%BD%E6%97%85%E8%A1%8C%E5%8A%A9%E6%89%8B">第十三章 智能旅行助手</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0-%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B7%B1%E5%BA%A6%E7%A0%94%E7%A9%B6%E6%99%BA%E8%83%BD%E4%BD%93">第十四章 自动化深度研究智能体</a></li>
+<li><a href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AB%A0-%E6%9E%84%E5%BB%BA%E8%B5%9B%E5%8D%9A%E5%B0%8F%E9%95%87">第十五章 构建赛博小镇</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%8F%8A%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B">第五部分：毕业设计及未来展望</a><ul>
+<li><a href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E7%AB%A0-%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1">第十六章 毕业设计</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="第一部分：智能体与语言模型基础"><a href="#第一部分：智能体与语言模型基础" class="headerlink" title="第一部分：智能体与语言模型基础"></a>第一部分：智能体与语言模型基础</h1><h2 id="第一章-初识智能体"><a href="#第一章-初识智能体" class="headerlink" title="第一章 初识智能体"></a>第一章 初识智能体</h2><h3 id="1-1-智能体的基础定义"><a href="#1-1-智能体的基础定义" class="headerlink" title="1.1 智能体的基础定义"></a>1.1 智能体的基础定义</h3><p><strong>智能体（Agent）</strong> 是任何能够通过<strong>传感器（Sensors）<strong>感知其所处</strong>环境（Environment）</strong>，并<strong>自主</strong>地通过**执行器（Actuators）<strong>采取</strong>行动（Action）**以达成特定目标的实体。</p>
+<p><strong>核心四要素</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>环境（Environment）</strong></td>
+<td>智能体所处的外部世界</td>
+<td>道路交通、金融市场</td>
+</tr>
+<tr>
+<td><strong>传感器（Sensors）</strong></td>
+<td>感知环境的组件</td>
+<td>摄像头、麦克风、API</td>
+</tr>
+<tr>
+<td><strong>执行器（Actuators）</strong></td>
+<td>对环境施加影响的组件</td>
+<td>机械臂、方向盘、代码执行</td>
+</tr>
+<tr>
+<td><strong>自主性（Autonomy）</strong></td>
+<td>独立决策能力</td>
+<td>基于感知和内部状态进行推理</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-传统智能体类型"><a href="#1-2-传统智能体类型" class="headerlink" title="1.2 传统智能体类型"></a>1.2 传统智能体类型</h3><p>演进路径：<code>简单反射智能体 → 基于模型的反射智能体 → 基于目标的智能体 → 基于效用的智能体 → 学习型智能体</code></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>核心特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>简单反射智能体</strong></td>
+<td>条件-动作规则</td>
+<td>自动恒温器</td>
+</tr>
+<tr>
+<td><strong>基于模型的反射智能体</strong></td>
+<td>内部世界模型</td>
+<td>自动驾驶汽车</td>
+</tr>
+<tr>
+<td><strong>基于目标的智能体</strong></td>
+<td>主动规划</td>
+<td>GPS导航系统（A*算法）</td>
+</tr>
+<tr>
+<td><strong>基于效用的智能体</strong></td>
+<td>多目标权衡</td>
+<td>综合路线规划</td>
+</tr>
+<tr>
+<td><strong>学习型智能体</strong></td>
+<td>通过经验自我改进</td>
+<td>AlphaGo Zero</td>
+</tr>
+</tbody></table>
+<h3 id="1-3-LLM智能体的核心能力"><a href="#1-3-LLM智能体的核心能力" class="headerlink" title="1.3 LLM智能体的核心能力"></a>1.3 LLM智能体的核心能力</h3><p>以<strong>智能旅行助手</strong>为例：</p>
+<ol>
+<li><strong>规划与推理</strong>：将高层目标分解为逻辑子任务</li>
+<li><strong>工具使用</strong>：主动调用外部工具补全信息缺口</li>
+<li><strong>动态修正</strong>：根据用户反馈调整后续行动</li>
+</ol>
+<h3 id="1-4-智能体分类维度"><a href="#1-4-智能体分类维度" class="headerlink" title="1.4 智能体分类维度"></a>1.4 智能体分类维度</h3><h4 id="基于时间与反应性分类"><a href="#基于时间与反应性分类" class="headerlink" title="基于时间与反应性分类"></a>基于时间与反应性分类</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>反应式</strong></td>
+<td>即时响应，低延迟</td>
+<td>安全气囊系统</td>
+</tr>
+<tr>
+<td><strong>规划式</strong></td>
+<td>深思熟虑，提前规划</td>
+<td>GPS导航</td>
+</tr>
+<tr>
+<td><strong>混合式</strong></td>
+<td>结合两者</td>
+<td>智能旅行助手</td>
+</tr>
+</tbody></table>
+<h4 id="基于知识表示的分类"><a href="#基于知识表示的分类" class="headerlink" title="基于知识表示的分类"></a>基于知识表示的分类</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>核心理念</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>符号主义 AI</strong></td>
+<td>知识源于符号的逻辑操作</td>
+<td>一丝不苟的图书管理员</td>
+</tr>
+<tr>
+<td><strong>亚符号主义 AI</strong></td>
+<td>知识内隐分布在神经网络中</td>
+<td>牙牙学语的孩童</td>
+</tr>
+<tr>
+<td><strong>神经符号主义 AI</strong></td>
+<td>融合符号主义和亚符号主义</td>
+<td>双系统协同</td>
+</tr>
+</tbody></table>
+<h3 id="1-5-智能体构成与运行原理"><a href="#1-5-智能体构成与运行原理" class="headerlink" title="1.5 智能体构成与运行原理"></a>1.5 智能体构成与运行原理</h3><h4 id="PEAS-模型"><a href="#PEAS-模型" class="headerlink" title="PEAS 模型"></a>PEAS 模型</h4><table>
+<thead>
+<tr>
+<th>PEAS要素</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>P（Performance）</strong></td>
+<td>性能度量</td>
+</tr>
+<tr>
+<td><strong>E（Environment）</strong></td>
+<td>环境</td>
+</tr>
+<tr>
+<td><strong>A（Actuators）</strong></td>
+<td>执行器</td>
+</tr>
+<tr>
+<td><strong>S（Sensors）</strong></td>
+<td>传感器</td>
+</tr>
+</tbody></table>
+<h4 id="Agent-Loop（智能体循环）"><a href="#Agent-Loop（智能体循环）" class="headerlink" title="Agent Loop（智能体循环）"></a>Agent Loop（智能体循环）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">感知（Perception）→ 思考（Thought）→ 行动（Action）→ 环境反馈 → 循环</span><br></pre></td></tr></table></figure>
+
+<h4 id="Thought-Action-Observation-交互协议"><a href="#Thought-Action-Observation-交互协议" class="headerlink" title="Thought-Action-Observation 交互协议"></a>Thought-Action-Observation 交互协议</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thought: 用户想知道北京的天气。我需要调用天气查询工具。</span><br><span class="line">Action: get_weather(<span class="string">&quot;北京&quot;</span>)</span><br><span class="line">Observation: 北京当前天气为晴，气温<span class="number">25</span>摄氏度。</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-关键术语表"><a href="#1-6-关键术语表" class="headerlink" title="1.6 关键术语表"></a>1.6 关键术语表</h3><table>
+<thead>
+<tr>
+<th>术语</th>
+<th>英文</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>智能体</td>
+<td>Agent</td>
+<td>能感知环境、自主行动的实体</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>Environment</td>
+<td>智能体所处的外部世界</td>
+</tr>
+<tr>
+<td>传感器</td>
+<td>Sensors</td>
+<td>感知环境的组件</td>
+</tr>
+<tr>
+<td>执行器</td>
+<td>Actuators</td>
+<td>对环境施加影响的组件</td>
+</tr>
+<tr>
+<td>PEAS模型</td>
+<td>PEAS Model</td>
+<td>描述任务环境的框架</td>
+</tr>
+<tr>
+<td>符号主义</td>
+<td>Symbolic AI</td>
+<td>基于逻辑规则的AI范式</td>
+</tr>
+<tr>
+<td>亚符号主义</td>
+<td>Sub-symbolic AI</td>
+<td>基于神经网络的AI范式</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第二章-智能体发展史"><a href="#第二章-智能体发展史" class="headerlink" title="第二章 智能体发展史"></a>第二章 智能体发展史</h2><h3 id="2-1-符号主义时代"><a href="#2-1-符号主义时代" class="headerlink" title="2.1 符号主义时代"></a>2.1 符号主义时代</h3><h4 id="物理符号系统假说（1976年）"><a href="#物理符号系统假说（1976年）" class="headerlink" title="物理符号系统假说（1976年）"></a>物理符号系统假说（1976年）</h4><p><strong>提出者</strong>：艾伦·纽厄尔、赫伯特·西蒙（图灵奖得主）</p>
+<p><strong>核心论断</strong>：</p>
+<ul>
+<li><strong>充分性论断</strong>：任何物理符号系统都具备产生通用智能行为的充分手段</li>
+<li><strong>必要性论断</strong>：任何能展现通用智能行为的系统，必然是物理符号系统</li>
+</ul>
+<h4 id="专家系统"><a href="#专家系统" class="headerlink" title="专家系统"></a>专家系统</h4><p><strong>代表</strong>：MYCIN系统（斯坦福大学）</p>
+<p><strong>核心组件</strong>：</p>
+<ul>
+<li><strong>知识库</strong>：存放领域专家知识（IF-THEN规则）</li>
+<li><strong>推理机</strong>：正向链&#x2F;反向链推理</li>
+</ul>
+<p><strong>置信因子（CF）</strong>：用-1到1之间的数值表示结论可信度</p>
+<h4 id="SHRDLU-系统（1968-1970年）"><a href="#SHRDLU-系统（1968-1970年）" class="headerlink" title="SHRDLU 系统（1968-1970年）"></a>SHRDLU 系统（1968-1970年）</h4><p><strong>开发者</strong>：特里·威诺格拉德</p>
+<p><strong>三大核心能力</strong>：</p>
+<ol>
+<li>自然语言理解</li>
+<li>规划与行动</li>
+<li>记忆与问答</li>
+</ol>
+<p><strong>历史地位</strong>：奠定”感知-思考-行动”闭环设计基础</p>
+<h4 id="符号主义的根本性挑战"><a href="#符号主义的根本性挑战" class="headerlink" title="符号主义的根本性挑战"></a>符号主义的根本性挑战</h4><table>
+<thead>
+<tr>
+<th>挑战</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>常识知识瓶颈</strong></td>
+<td>专家系统知识需人工编码，成本高昂</td>
+</tr>
+<tr>
+<td><strong>框架问题</strong></td>
+<td>如何高效判断动作执行后哪些事物未改变</td>
+</tr>
+<tr>
+<td><strong>系统脆弱性</strong></td>
+<td>规则外的微小变化导致系统失灵</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-规则驱动聊天机器人"><a href="#2-2-规则驱动聊天机器人" class="headerlink" title="2.2 规则驱动聊天机器人"></a>2.2 规则驱动聊天机器人</h3><h4 id="ELIZA-系统（1966年）"><a href="#ELIZA-系统（1966年）" class="headerlink" title="ELIZA 系统（1966年）"></a>ELIZA 系统（1966年）</h4><p><strong>开发者</strong>：约瑟夫·魏泽鲍姆</p>
+<p><strong>算法流程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">关键词识别 → 分解规则 → 代词转换 → 重组规则 → 生成回应</span><br></pre></td></tr></table></figure>
+
+<p><strong>局限性</strong>：</p>
+<ul>
+<li>缺乏语义理解</li>
+<li>无上下文记忆</li>
+<li>规则扩展性问题</li>
+</ul>
+<p><strong>“ELIZA效应”</strong>：用户相信ELIZA能理解自己</p>
+<h3 id="2-3-明斯基的心智社会"><a href="#2-3-明斯基的心智社会" class="headerlink" title="2.3 明斯基的心智社会"></a>2.3 明斯基的心智社会</h3><p><strong>著作</strong>：《心智社会》(The Society of Mind)</p>
+<p><strong>核心引言</strong>：</p>
+<blockquote>
+<p>“智能的本质来自大量简单底层智能体之间的局部交互——涌现”</p>
+</blockquote>
+<p><strong>三大根本性问题</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>符号主义观点</th>
+<th>心智社会观点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“理解”是什么？</td>
+<td>一种单一能力</td>
+<td>多过程协同</td>
+</tr>
+<tr>
+<td>“常识”是什么？</td>
+<td>庞大规则库</td>
+<td>分布式经验网络</td>
+</tr>
+<tr>
+<td>如何构建？</td>
+<td>追求统一的逻辑系统</td>
+<td>不完美的大杂烩</td>
+</tr>
+</tbody></table>
+<h3 id="2-4-学习范式的演进"><a href="#2-4-学习范式的演进" class="headerlink" title="2.4 学习范式的演进"></a>2.4 学习范式的演进</h3><h4 id="联结主义-vs-符号主义"><a href="#联结主义-vs-符号主义" class="headerlink" title="联结主义 vs 符号主义"></a>联结主义 vs 符号主义</h4><table>
+<thead>
+<tr>
+<th>特征</th>
+<th>符号主义</th>
+<th>联结主义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>知识表示</td>
+<td>明确的符号或规则</td>
+<td>连接权重分布式存储</td>
+</tr>
+<tr>
+<td>设计哲学</td>
+<td>自上而下</td>
+<td>自下而上</td>
+</tr>
+<tr>
+<td>灵感来源</td>
+<td>数理逻辑</td>
+<td>生物大脑神经网络</td>
+</tr>
+</tbody></table>
+<h4 id="强化学习框架"><a href="#强化学习框架" class="headerlink" title="强化学习框架"></a>强化学习框架</h4><table>
+<thead>
+<tr>
+<th>要素</th>
+<th>定义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>智能体</strong></td>
+<td>学习者和决策者</td>
+<td>AlphaGo</td>
+</tr>
+<tr>
+<td><strong>环境</strong></td>
+<td>智能体外部交互对象</td>
+<td>围棋规则</td>
+</tr>
+<tr>
+<td><strong>状态(S)</strong></td>
+<td>环境在某一时刻的描述</td>
+<td>棋盘位置</td>
+</tr>
+<tr>
+<td><strong>行动(A)</strong></td>
+<td>智能体能采取的操作</td>
+<td>落子位置</td>
+</tr>
+<tr>
+<td><strong>奖励(R)</strong></td>
+<td>环境反馈的评价信号</td>
+<td>胜利+1</td>
+</tr>
+</tbody></table>
+<h4 id="预训练-微调范式"><a href="#预训练-微调范式" class="headerlink" title="预训练-微调范式"></a>预训练-微调范式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">预训练阶段（自监督学习，海量文本）→ 微调阶段（少量标注数据）</span><br></pre></td></tr></table></figure>
+
+<p><strong>涌现能力</strong>：</p>
+<ul>
+<li>上下文学习</li>
+<li>思维链推理</li>
+</ul>
+<h3 id="2-5-LLM驱动智能体架构"><a href="#2-5-LLM驱动智能体架构" class="headerlink" title="2.5 LLM驱动智能体架构"></a>2.5 LLM驱动智能体架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">外部环境 → 感知模块 → 规划模块+LLM → 执行模块 → 反馈 → 循环</span><br><span class="line">                    ↑</span><br><span class="line">               记忆模块</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第三章-大语言模型基础"><a href="#第三章-大语言模型基础" class="headerlink" title="第三章 大语言模型基础"></a>第三章 大语言模型基础</h2><h3 id="3-1-语言模型演进"><a href="#3-1-语言模型演进" class="headerlink" title="3.1 语言模型演进"></a>3.1 语言模型演进</h3><h4 id="统计语言模型与-N-gram"><a href="#统计语言模型与-N-gram" class="headerlink" title="统计语言模型与 N-gram"></a>统计语言模型与 N-gram</h4><p><strong>核心公式（概率链式法则）</strong>：<br>$$P(w_1,w_2,\cdots,w_m) &#x3D; P(w_1) \cdot P(w_2|w_1) \cdots P(w_m|w_1,\cdots,w_{m-1})$$</p>
+<p><strong>马尔可夫假设</strong>：词的出现概率只与前面 n-1 个词有关</p>
+<p><strong>致命缺陷</strong>：数据稀疏性、泛化能力差</p>
+<h4 id="神经网络与词嵌入"><a href="#神经网络与词嵌入" class="headerlink" title="神经网络与词嵌入"></a>神经网络与词嵌入</h4><p><strong>词嵌入</strong>：将词映射为高维连续向量，语义相近的词向量位置相近</p>
+<p><strong>词向量的语义运算</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector(&#x27;King&#x27;) - vector(&#x27;Man&#x27;) + vector(&#x27;Woman&#x27;) ≈ vector(&#x27;Queen&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="RNN-与-LSTM"><a href="#RNN-与-LSTM" class="headerlink" title="RNN 与 LSTM"></a>RNN 与 LSTM</h4><p><strong>RNN</strong>：引入隐藏状态，赋予”记忆”能力</p>
+<p><strong>LSTM门控机制</strong>：</p>
+<ul>
+<li><strong>遗忘门</strong>：决定丢弃哪些信息</li>
+<li><strong>输入门</strong>：决定存入哪些新信息</li>
+<li><strong>输出门</strong>：决定输出哪些信息</li>
+</ul>
+<h3 id="3-2-Transformer-架构"><a href="#3-2-Transformer-架构" class="headerlink" title="3.2 Transformer 架构"></a>3.2 Transformer 架构</h3><h4 id="自注意力机制"><a href="#自注意力机制" class="headerlink" title="自注意力机制"></a>自注意力机制</h4><p><strong>Q, K, V 三个角色</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>查询 (Query)</strong></td>
+<td>当前词元主动”查询”其他词元</td>
+</tr>
+<tr>
+<td><strong>键 (Key)</strong></td>
+<td>可被查询的词元”标签”</td>
+</tr>
+<tr>
+<td><strong>值 (Value)</strong></td>
+<td>词元本身携带的”内容”</td>
+</tr>
+</tbody></table>
+<p><strong>注意力计算公式</strong>：<br>$$\text{Attention}(Q,K,V) &#x3D; \text{softmax}\left(\frac{QK^{T}}{\sqrt{d_{k}}}\right)V$$</p>
+<h4 id="多头注意力"><a href="#多头注意力" class="headerlink" title="多头注意力"></a>多头注意力</h4><p>将 Q, K, V 切分成 h 份，每份独立计算注意力再拼接，让模型从不同角度关注不同类型的关联。</p>
+<h4 id="位置编码"><a href="#位置编码" class="headerlink" title="位置编码"></a>位置编码</h4><p><strong>问题</strong>：自注意力机制本身不包含词元顺序信息</p>
+<p><strong>解决方案</strong>：使用正弦和余弦函数生成位置向量<br>$$PE_{(pos,2i)} &#x3D; \sin\left(\frac{pos}{10000^{2i&#x2F;d_{\text{model}}}}\right)$$</p>
+<h3 id="3-3-Decoder-Only-架构"><a href="#3-3-Decoder-Only-架构" class="headerlink" title="3.3 Decoder-Only 架构"></a>3.3 Decoder-Only 架构</h3><p><strong>核心思想</strong>：语言的核心任务是”预测下一个最可能出现的词”</p>
+<p><strong>自回归 (Autoregressive) 工作模式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">输入 → 预测下一个词 → 添加到输入 → 再次预测 → 循环</span><br></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>：</p>
+<ul>
+<li>训练目标统一</li>
+<li>结构简单，易扩展</li>
+<li>天然适合生成任务</li>
+</ul>
+<h3 id="3-4-与大语言模型交互"><a href="#3-4-与大语言模型交互" class="headerlink" title="3.4 与大语言模型交互"></a>3.4 与大语言模型交互</h3><h4 id="Temperature（温度）"><a href="#Temperature（温度）" class="headerlink" title="Temperature（温度）"></a>Temperature（温度）</h4><table>
+<thead>
+<tr>
+<th>温度范围</th>
+<th>输出特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>低 (0~0.3)</td>
+<td>精准、确定</td>
+<td>事实性任务、代码生成</td>
+</tr>
+<tr>
+<td>中 (0.3~0.7)</td>
+<td>平衡、自然</td>
+<td>日常对话</td>
+</tr>
+<tr>
+<td>高 (0.7~2)</td>
+<td>创新、发散</td>
+<td>诗歌创作、头脑风暴</td>
+</tr>
+</tbody></table>
+<h4 id="提示方法对比"><a href="#提示方法对比" class="headerlink" title="提示方法对比"></a>提示方法对比</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>示例数量</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>零样本 (Zero-shot)</strong></td>
+<td>0</td>
+<td>直接下达指令</td>
+</tr>
+<tr>
+<td><strong>单样本 (One-shot)</strong></td>
+<td>1</td>
+<td>提供一个完整示例</td>
+</tr>
+<tr>
+<td><strong>少样本 (Few-shot)</strong></td>
+<td>多</td>
+<td>提供多个示例</td>
+</tr>
+</tbody></table>
+<h4 id="思维链-CoT"><a href="#思维链-CoT" class="headerlink" title="思维链 (CoT)"></a>思维链 (CoT)</h4><p>在提示中加入 “请逐步思考” 或 “Let’s think step by step”，显著提升复杂推理任务准确性。</p>
+<h3 id="3-5-分词方法"><a href="#3-5-分词方法" class="headerlink" title="3.5 分词方法"></a>3.5 分词方法</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>按词分词</strong></td>
+<td>直观</td>
+<td>词表爆炸、OOV问题</td>
+</tr>
+<tr>
+<td><strong>按字符分词</strong></td>
+<td>词表小、无OOV</td>
+<td>语义信息少</td>
+</tr>
+<tr>
+<td><strong>子词分词</strong></td>
+<td>兼顾词表大小和语义</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<p><strong>BPE算法</strong>：统计相邻词元对频率，合并最高频的一对</p>
+<h3 id="3-6-模型幻觉-Hallucination"><a href="#3-6-模型幻觉-Hallucination" class="headerlink" title="3.6 模型幻觉 (Hallucination)"></a>3.6 模型幻觉 (Hallucination)</h3><p><strong>幻觉类型</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>事实性幻觉</td>
+<td>与现实世界事实不符</td>
+</tr>
+<tr>
+<td>忠实性幻觉</td>
+<td>未忠实反映源文本含义</td>
+</tr>
+<tr>
+<td>内在幻觉</td>
+<td>与输入信息直接矛盾</td>
+</tr>
+</tbody></table>
+<p><strong>缓解方法</strong>：RAG、多步推理验证、外部工具调用、RLHF</p>
+<hr>
+<h1 id="第二部分：构建你的大语言模型智能体"><a href="#第二部分：构建你的大语言模型智能体" class="headerlink" title="第二部分：构建你的大语言模型智能体"></a>第二部分：构建你的大语言模型智能体</h1><h2 id="第四章-智能体经典范式构建"><a href="#第四章-智能体经典范式构建" class="headerlink" title="第四章 智能体经典范式构建"></a>第四章 智能体经典范式构建</h2><h3 id="4-1-ReAct（推理与行动）"><a href="#4-1-ReAct（推理与行动）" class="headerlink" title="4.1 ReAct（推理与行动）"></a>4.1 ReAct（推理与行动）</h3><p><strong>核心思想</strong>：将推理与行动显式结合，形成”思考-行动-观察”循环</p>
+<p><strong>形式化表达</strong>：<br>$$\left(th_t,a_t\right)&#x3D;\pi\left(q,(a_1,o_1),\ldots,(a_{t-1},o_{t-1})\right)$$</p>
+<p><strong>工作流程</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Thought</strong></td>
+<td>分析当前情况、分解任务</td>
+</tr>
+<tr>
+<td><strong>Action</strong></td>
+<td>调用外部工具</td>
+</tr>
+<tr>
+<td><strong>Observation</strong></td>
+<td>执行结果反馈</td>
+</tr>
+</tbody></table>
+<p><strong>特点</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>高可解释性</td>
+<td>对LLM能力强依赖</td>
+</tr>
+<tr>
+<td>动态规划与纠错</td>
+<td>执行效率问题</td>
+</tr>
+<tr>
+<td>工具协同能力</td>
+<td>提示词脆弱性</td>
+</tr>
+</tbody></table>
+<h3 id="4-2-Plan-and-Solve（规划与执行）"><a href="#4-2-Plan-and-Solve（规划与执行）" class="headerlink" title="4.2 Plan-and-Solve（规划与执行）"></a>4.2 Plan-and-Solve（规划与执行）</h3><p><strong>核心思想</strong>：先规划，后执行</p>
+<p><strong>形式化表达</strong>：<br>$$P &#x3D; \pi_{\text{plan}}(q)$$<br>$$s_i &#x3D; \pi_{\text{solve}}(q, P, (s_1, \dots, s_{i-1}))$$</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>多步数学应用题</li>
+<li>需要整合多个信息源的报告撰写</li>
+<li>代码生成任务</li>
+</ul>
+<h3 id="4-3-Reflection（自我反思）"><a href="#4-3-Reflection（自我反思）" class="headerlink" title="4.3 Reflection（自我反思）"></a>4.3 Reflection（自我反思）</h3><p><strong>核心思想</strong>：执行 → 反思 → 优化</p>
+<p><strong>形式化表达</strong>：<br>$$F_i &#x3D; \pi_{\text{reflect}}(\text{Task}, O_i)$$<br>$$O_{i+1} &#x3D; \pi_{\text{refine}}(\text{Task}, O_i, F_i)$$</p>
+<p><strong>特点</strong>：引入事后自我校正循环，显著提升解决方案质量</p>
+<h3 id="4-4-三种范式对比"><a href="#4-4-三种范式对比" class="headerlink" title="4.4 三种范式对比"></a>4.4 三种范式对比</h3><table>
+<thead>
+<tr>
+<th>范式</th>
+<th>核心优势</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ReAct</strong></td>
+<td>环境适应性、动态纠错</td>
+<td>探索性任务</td>
+</tr>
+<tr>
+<td><strong>Plan-and-Solve</strong></td>
+<td>结构性和稳定性</td>
+<td>逻辑路径确定</td>
+</tr>
+<tr>
+<td><strong>Reflection</strong></td>
+<td>解决方案质量跃迁</td>
+<td>准确性和可靠性要求极高</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第五章-基于低代码平台的智能体搭建"><a href="#第五章-基于低代码平台的智能体搭建" class="headerlink" title="第五章 基于低代码平台的智能体搭建"></a>第五章 基于低代码平台的智能体搭建</h2><h3 id="5-1-低代码平台核心价值"><a href="#5-1-低代码平台核心价值" class="headerlink" title="5.1 低代码平台核心价值"></a>5.1 低代码平台核心价值</h3><table>
+<thead>
+<tr>
+<th>价值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>降低技术门槛</td>
+<td>封装复杂技术细节</td>
+</tr>
+<tr>
+<td>提升开发效率</td>
+<td>快速验证想法和搭建原型</td>
+</tr>
+<tr>
+<td>更好的可观测性</td>
+<td>图形化展示数据流动</td>
+</tr>
+<tr>
+<td>标准化与最佳实践</td>
+<td>内置行业最佳实践</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-三大平台对比"><a href="#5-2-三大平台对比" class="headerlink" title="5.2 三大平台对比"></a>5.2 三大平台对比</h3><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>核心定位</th>
+<th>适用人群</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Coze</strong></td>
+<td>零代码&#x2F;低代码Agent构建</td>
+<td>AI入门用户、产品经理</td>
+<td>可视化界面、丰富插件</td>
+</tr>
+<tr>
+<td><strong>Dify</strong></td>
+<td>LLM应用开发与运营平台</td>
+<td>技术团队、企业</td>
+<td>全栈支持、9000+工具</td>
+</tr>
+<tr>
+<td><strong>n8n</strong></td>
+<td>工作流自动化工具</td>
+<td>深度集成开发者</td>
+<td>强大”连接”能力</td>
+</tr>
+</tbody></table>
+<h3 id="5-3-平台选择建议"><a href="#5-3-平台选择建议" class="headerlink" title="5.3 平台选择建议"></a>5.3 平台选择建议</h3><ul>
+<li><strong>快速原型验证、非技术用户</strong> → <strong>Coze</strong></li>
+<li><strong>企业级应用、复杂业务逻辑</strong> → <strong>Dify</strong></li>
+<li><strong>深度业务集成、自动化流程</strong> → <strong>n8n</strong></li>
+</ul>
+<hr>
+<h2 id="第六章-框架开发实践"><a href="#第六章-框架开发实践" class="headerlink" title="第六章 框架开发实践"></a>第六章 框架开发实践</h2><h3 id="6-1-为什么需要智能体框架"><a href="#6-1-为什么需要智能体框架" class="headerlink" title="6.1 为什么需要智能体框架"></a>6.1 为什么需要智能体框架</h3><ol>
+<li><strong>提升代码复用与开发效率</strong>：通用 Agent 基类封装核心循环</li>
+<li><strong>实现组件解耦与可扩展性</strong>：模型层、工具层、记忆层分离</li>
+<li><strong>标准化复杂的状态管理</strong>：处理上下文窗口、历史信息持久化</li>
+<li><strong>简化可观测性与调试</strong>：事件回调机制</li>
+</ol>
+<h3 id="6-2-四大框架对比"><a href="#6-2-四大框架对比" class="headerlink" title="6.2 四大框架对比"></a>6.2 四大框架对比</h3><table>
+<thead>
+<tr>
+<th>框架</th>
+<th>核心理念</th>
+<th>协作模式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AutoGen</strong></td>
+<td>对话驱动协作</td>
+<td>多角色群聊</td>
+<td>自然对话映射</td>
+</tr>
+<tr>
+<td><strong>AgentScope</strong></td>
+<td>工程化优先</td>
+<td>消息驱动</td>
+<td>分布式部署</td>
+</tr>
+<tr>
+<td><strong>CAMEL</strong></td>
+<td>角色扮演</td>
+<td>双智能体协作</td>
+<td>引导性提示</td>
+</tr>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>图结构控制</td>
+<td>状态机&#x2F;有向图</td>
+<td>支持循环和分支</td>
+</tr>
+</tbody></table>
+<h3 id="6-3-设计权衡"><a href="#6-3-设计权衡" class="headerlink" title="6.3 设计权衡"></a>6.3 设计权衡</h3><ol>
+<li><p><strong>“涌现式协作”与”显式控制”的选择</strong></p>
+<ul>
+<li>AutoGen&#x2F;CAMEL：让协作行为从对话规则中”涌现”</li>
+<li>LangGraph：明确每一步和跳转条件，换取可靠性</li>
+</ul>
+</li>
+<li><p><strong>工程化维度</strong></p>
+<ul>
+<li>AgentScope 代表从”能运行”到”能稳定服务”的跨越</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="第七章-构建你的-Agent-框架"><a href="#第七章-构建你的-Agent-框架" class="headerlink" title="第七章 构建你的 Agent 框架"></a>第七章 构建你的 Agent 框架</h2><h3 id="7-1-HelloAgents-设计理念"><a href="#7-1-HelloAgents-设计理念" class="headerlink" title="7.1 HelloAgents 设计理念"></a>7.1 HelloAgents 设计理念</h3><table>
+<thead>
+<tr>
+<th>理念</th>
+<th>含义</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>轻量级与教学友好</td>
+<td>完整可读性</td>
+<td>极简依赖策略</td>
+</tr>
+<tr>
+<td>基于标准API</td>
+<td>遵循OpenAI API标准</td>
+<td>兼容主流LLM</td>
+</tr>
+<tr>
+<td>渐进式学习路径</td>
+<td>每章代码保存为可pip安装的版本</td>
+<td>版本迭代</td>
+</tr>
+<tr>
+<td>万物皆为工具</td>
+<td>Memory、RAG统一抽象</td>
+<td>消除不必要抽象层</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-框架目录结构"><a href="#7-2-框架目录结构" class="headerlink" title="7.2 框架目录结构"></a>7.2 框架目录结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">hello_agents/</span><br><span class="line">├── core/                     # 核心框架层</span><br><span class="line">│   ├── agent.py              # Agent基类</span><br><span class="line">│   ├── llm.py               # HelloAgentsLLM统一接口</span><br><span class="line">│   ├── message.py           # 消息系统</span><br><span class="line">│   └── config.py            # 配置管理</span><br><span class="line">├── agents/                   # Agent实现层</span><br><span class="line">│   ├── simple_agent.py       # SimpleAgent</span><br><span class="line">│   ├── react_agent.py        # ReActAgent</span><br><span class="line">│   ├── reflection_agent.py   # ReflectionAgent</span><br><span class="line">│   └── plan_solve_agent.py  # PlanAndSolveAgent</span><br><span class="line">├── tools/                    # 工具系统层</span><br><span class="line">│   ├── base.py              # 工具基类</span><br><span class="line">│   ├── registry.py           # 工具注册机制</span><br><span class="line">│   └── builtin/              # 内置工具集</span><br><span class="line">└──</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-四种-Agent-范式对比"><a href="#7-3-四种-Agent-范式对比" class="headerlink" title="7.3 四种 Agent 范式对比"></a>7.3 四种 Agent 范式对比</h3><table>
+<thead>
+<tr>
+<th>Agent类型</th>
+<th>核心机制</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SimpleAgent</strong></td>
+<td>基础对话</td>
+<td>简单问答</td>
+</tr>
+<tr>
+<td><strong>ReActAgent</strong></td>
+<td>思考→行动→观察循环</td>
+<td>需要工具调用</td>
+</tr>
+<tr>
+<td><strong>ReflectionAgent</strong></td>
+<td>执行→反思→优化循环</td>
+<td>质量要求高</td>
+</tr>
+<tr>
+<td><strong>PlanAndSolveAgent</strong></td>
+<td>规划→执行步骤</td>
+<td>复杂多步骤任务</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="第三部分：高级知识扩展"><a href="#第三部分：高级知识扩展" class="headerlink" title="第三部分：高级知识扩展"></a>第三部分：高级知识扩展</h1><h2 id="第八章-记忆与检索"><a href="#第八章-记忆与检索" class="headerlink" title="第八章 记忆与检索"></a>第八章 记忆与检索</h2><h3 id="8-1-为什么需要记忆系统"><a href="#8-1-为什么需要记忆系统" class="headerlink" title="8.1 为什么需要记忆系统"></a>8.1 为什么需要记忆系统</h3><p>大语言模型本质上是<strong>无状态的</strong>，导致三大局限：</p>
+<table>
+<thead>
+<tr>
+<th>局限</th>
+<th>表现</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上下文丢失</td>
+<td>长对话中早期信息被遗忘</td>
+<td>无法维持连贯对话</td>
+</tr>
+<tr>
+<td>个性化缺失</td>
+<td>无法记住用户偏好</td>
+<td>交互体验差</td>
+</tr>
+<tr>
+<td>学习能力受限</td>
+<td>无法从过往经验学习</td>
+<td>无法持续改进</td>
+</tr>
+</tbody></table>
+<h3 id="8-2-四层记忆架构"><a href="#8-2-四层记忆架构" class="headerlink" title="8.2 四层记忆架构"></a>8.2 四层记忆架构</h3><table>
+<thead>
+<tr>
+<th>记忆类型</th>
+<th>存储</th>
+<th>容量&#x2F;过期</th>
+<th>检索方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>工作记忆</strong></td>
+<td>纯内存+TTL</td>
+<td>50条&#x2F;15-30秒</td>
+<td>TF-IDF+关键词</td>
+</tr>
+<tr>
+<td><strong>情景记忆</strong></td>
+<td>SQLite+Qdrant</td>
+<td>持久化</td>
+<td>向量+时间序列</td>
+</tr>
+<tr>
+<td><strong>语义记忆</strong></td>
+<td>Qdrant+Neo4j</td>
+<td>持久化</td>
+<td>向量+图关系</td>
+</tr>
+<tr>
+<td><strong>感知记忆</strong></td>
+<td>Qdrant(多模态)</td>
+<td>持久化</td>
+<td>跨模态检索</td>
+</tr>
+</tbody></table>
+<h3 id="8-3-评分机制"><a href="#8-3-评分机制" class="headerlink" title="8.3 评分机制"></a>8.3 评分机制</h3><table>
+<thead>
+<tr>
+<th>记忆类型</th>
+<th>评分公式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工作记忆</td>
+<td><code>(向量×0.7 + 关键词×0.3) × 时间衰减 × (0.8 + 重要性×0.4)</code></td>
+</tr>
+<tr>
+<td>情景记忆</td>
+<td><code>(向量×0.8 + 时间×0.2) × 重要性权重</code></td>
+</tr>
+<tr>
+<td>语义记忆</td>
+<td><code>(向量×0.7 + 图×0.3) × 重要性权重</code></td>
+</tr>
+</tbody></table>
+<h3 id="8-4-RAG-系统"><a href="#8-4-RAG-系统" class="headerlink" title="8.4 RAG 系统"></a>8.4 RAG 系统</h3><p><strong>高级检索策略</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>原理</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MQE（多查询扩展）</strong></td>
+<td>使用LLM生成n个语义等价查询</td>
+<td>提升召回率</td>
+</tr>
+<tr>
+<td><strong>HyDE（假设文档嵌入）</strong></td>
+<td>生成假设性答案文档用于检索</td>
+<td>改善精度</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第九章-上下文工程"><a href="#第九章-上下文工程" class="headerlink" title="第九章 上下文工程"></a>第九章 上下文工程</h2><h3 id="9-1-核心概念：上下文腐蚀"><a href="#9-1-核心概念：上下文腐蚀" class="headerlink" title="9.1 核心概念：上下文腐蚀"></a>9.1 核心概念：上下文腐蚀</h3><p><strong>上下文腐蚀 (Context Rot)</strong>：随着上下文窗口tokens增加，模型准确回忆信息的能力反而下降。</p>
+<p><strong>核心观点</strong>：LLM有有限的”注意力预算”，每新增一个token都消耗预算。</p>
+<h3 id="9-2-长时程任务三大策略"><a href="#9-2-长时程任务三大策略" class="headerlink" title="9.2 长时程任务三大策略"></a>9.2 长时程任务三大策略</h3><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>压缩整合</strong></td>
+<td>对话接近上限时高保真总结，重启新窗口</td>
+<td>长对话连续性任务</td>
+</tr>
+<tr>
+<td><strong>结构化笔记</strong></td>
+<td>固定频率写入外部持久化存储</td>
+<td>迭代式开发和研究</td>
+</tr>
+<tr>
+<td><strong>子代理架构</strong></td>
+<td>专长子代理在干净窗口中深挖</td>
+<td>复杂研究与分析</td>
+</tr>
+</tbody></table>
+<h3 id="9-3-GSSC-流水线"><a href="#9-3-GSSC-流水线" class="headerlink" title="9.3 GSSC 流水线"></a>9.3 GSSC 流水线</h3><table>
+<thead>
+<tr>
+<th align="center">阶段</th>
+<th>全称</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>G</strong></td>
+<td>Gather</td>
+<td>多源信息汇集</td>
+</tr>
+<tr>
+<td align="center"><strong>S</strong></td>
+<td>Select</td>
+<td>智能选择（相关性+新近性评分）</td>
+</tr>
+<tr>
+<td align="center"><strong>S</strong></td>
+<td>Structure</td>
+<td>结构化输出</td>
+</tr>
+<tr>
+<td align="center"><strong>C</strong></td>
+<td>Compress</td>
+<td>兜底压缩</td>
+</tr>
+</tbody></table>
+<p><strong>评分公式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">综合分数 = 相关性权重 × 相关性 + 新近性权重 × 新近性</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第十章-智能体通信协议"><a href="#第十章-智能体通信协议" class="headerlink" title="第十章 智能体通信协议"></a>第十章 智能体通信协议</h2><h3 id="10-1-三大协议定位对比"><a href="#10-1-三大协议定位对比" class="headerlink" title="10.1 三大协议定位对比"></a>10.1 三大协议定位对比</h3><table>
+<thead>
+<tr>
+<th align="center">协议</th>
+<th>全称</th>
+<th>核心定位</th>
+<th>解决什么问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>MCP</strong></td>
+<td>Model Context Protocol</td>
+<td>智能体-工具桥梁</td>
+<td>如何访问外部工具和服务</td>
+</tr>
+<tr>
+<td align="center"><strong>A2A</strong></td>
+<td>Agent-to-Agent Protocol</td>
+<td>智能体间对话</td>
+<td>多个智能体如何协作</td>
+</tr>
+<tr>
+<td align="center"><strong>ANP</strong></td>
+<td>Agent Network Protocol</td>
+<td>大规模网络基础设施</td>
+<td>如何发现和连接智能体</td>
+</tr>
+</tbody></table>
+<h3 id="10-2-MCP-协议详解"><a href="#10-2-MCP-协议详解" class="headerlink" title="10.2 MCP 协议详解"></a>10.2 MCP 协议详解</h3><p><strong>核心能力</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Tools</strong></td>
+<td>主动执行操作</td>
+<td>读文件、调用API</td>
+</tr>
+<tr>
+<td><strong>Resources</strong></td>
+<td>被动提供数据</td>
+<td>文件URI、表结构</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>指导性模板</td>
+<td>代码审查模板</td>
+</tr>
+</tbody></table>
+<p><strong>架构</strong>：Host-Client-Server 三层架构</p>
+<h3 id="10-3-协议选择指南"><a href="#10-3-协议选择指南" class="headerlink" title="10.3 协议选择指南"></a>10.3 协议选择指南</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">需要访问外部服务？ → 是 → 使用 MCP</span><br><span class="line">                          ↓ 否</span><br><span class="line">           需要多智能体协作？</span><br><span class="line">              ├─ 小规模（2-10个）→ 使用 A2A</span><br><span class="line">              └─ 大规模网络 → 使用 ANP</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="第十一章-Agentic-RL"><a href="#第十一章-Agentic-RL" class="headerlink" title="第十一章 Agentic-RL"></a>第十一章 Agentic-RL</h2><h3 id="11-1-为什么需要强化学习"><a href="#11-1-为什么需要强化学习" class="headerlink" title="11.1 为什么需要强化学习"></a>11.1 为什么需要强化学习</h3><table>
+<thead>
+<tr>
+<th>传统监督学习局限</th>
+<th>Agentic RL 优势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据质量依赖，只能模仿</td>
+<td>可探索超越人类示范的方案</td>
+</tr>
+<tr>
+<td>缺乏探索能力</td>
+<td>主动探索</td>
+</tr>
+<tr>
+<td>难以优化多步推理</td>
+<td>可精确优化累积奖励</td>
+</tr>
+</tbody></table>
+<h3 id="11-2-LLM-训练全景图"><a href="#11-2-LLM-训练全景图" class="headerlink" title="11.2 LLM 训练全景图"></a>11.2 LLM 训练全景图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">预训练（因果语言建模）→ 后训练（SFT → RM → RL微调）</span><br><span class="line">                                           ↓</span><br><span class="line">                                     PPO / GRPO</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-后训练三步骤"><a href="#11-3-后训练三步骤" class="headerlink" title="11.3 后训练三步骤"></a>11.3 后训练三步骤</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>目标</th>
+<th>损失函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SFT</strong></td>
+<td>遵循指令和对话格式</td>
+<td>$-\sum \log P(y_i|x_i)$</td>
+</tr>
+<tr>
+<td><strong>RM</strong></td>
+<td>评估回答质量</td>
+<td>$-\mathbb{E}[\log \sigma(r_w - r_l)]$</td>
+</tr>
+<tr>
+<td><strong>RL</strong></td>
+<td>优化策略</td>
+<td>$J_{PPO} &#x3D; \mathbb{E}[r] - \beta D_{KL}$</td>
+</tr>
+</tbody></table>
+<h3 id="11-4-PBRFT-vs-Agentic-RL"><a href="#11-4-PBRFT-vs-Agentic-RL" class="headerlink" title="11.4 PBRFT vs Agentic RL"></a>11.4 PBRFT vs Agentic RL</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>PBRFT</th>
+<th>Agentic RL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>状态</td>
+<td>静态</td>
+<td>动态演化</td>
+</tr>
+<tr>
+<td>时间跨度</td>
+<td>T&#x3D;1，单步</td>
+<td>T≫1，多步</td>
+</tr>
+<tr>
+<td>行动空间</td>
+<td>仅文本生成</td>
+<td>文本+工具调用</td>
+</tr>
+<tr>
+<td>奖励</td>
+<td>单步奖励</td>
+<td>累积折扣奖励</td>
+</tr>
+</tbody></table>
+<h3 id="11-5-GRPO-vs-PPO"><a href="#11-5-GRPO-vs-PPO" class="headerlink" title="11.5 GRPO vs PPO"></a>11.5 GRPO vs PPO</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>PPO</th>
+<th>GRPO</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Value Model</td>
+<td>需要</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td>模型数量</td>
+<td>4个</td>
+<td>2个</td>
+</tr>
+<tr>
+<td>训练稳定性</td>
+<td>一般</td>
+<td>较高</td>
+</tr>
+</tbody></table>
+<p><strong>GRPO核心公式</strong>：<br>$$J_{GRPO} &#x3D; \mathbb{E}\left[\frac{\pi_\theta}{\pi_{ref}}(r - \bar{r}<em>{group})\right] - \beta \cdot D</em>{KL}$$</p>
+<h3 id="11-6-LoRA-参数高效微调"><a href="#11-6-LoRA-参数高效微调" class="headerlink" title="11.6 LoRA 参数高效微调"></a>11.6 LoRA 参数高效微调</h3><p><strong>核心思想</strong>：参数变化可用低秩矩阵表示<br>$$\Delta W &#x3D; BA, \quad B \in \mathbb{R}^{d \times r}, A \in \mathbb{R}^{r \times k}$$</p>
+<p><strong>效果</strong>（Qwen3-0.6B）：全量微调 ~12GB → LoRA ~1-6GB</p>
+<hr>
+<h2 id="第十二章-智能体性能评估"><a href="#第十二章-智能体性能评估" class="headerlink" title="第十二章 智能体性能评估"></a>第十二章 智能体性能评估</h2><h3 id="12-1-评估体系架构"><a href="#12-1-评估体系架构" class="headerlink" title="12.1 评估体系架构"></a>12.1 评估体系架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Tool 层（评估工具化封装）</span><br><span class="line">        ↓</span><br><span class="line">Evaluator 层（评估执行）</span><br><span class="line">        ↓</span><br><span class="line">Dataset 层（数据管理）</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-核心评估基准"><a href="#12-2-核心评估基准" class="headerlink" title="12.2 核心评估基准"></a>12.2 核心评估基准</h3><table>
+<thead>
+<tr>
+<th>基准</th>
+<th>来源</th>
+<th>评估能力</th>
+<th>数据规模</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>BFCL</strong></td>
+<td>UC Berkeley</td>
+<td>工具调用能力</td>
+<td>1120+</td>
+</tr>
+<tr>
+<td><strong>GAIA</strong></td>
+<td>Meta + HuggingFace</td>
+<td>通用AI助手能力</td>
+<td>466</td>
+</tr>
+<tr>
+<td><strong>AgentBench</strong></td>
+<td>清华大学</td>
+<td>8领域通用能力</td>
+<td>多领域</td>
+</tr>
+</tbody></table>
+<h3 id="12-3-BFCL-评估机制"><a href="#12-3-BFCL-评估机制" class="headerlink" title="12.3 BFCL 评估机制"></a>12.3 BFCL 评估机制</h3><p><strong>AST匹配算法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 匹配规则</span></span><br><span class="line"><span class="number">1.</span> 函数名必须精确匹配</span><br><span class="line"><span class="number">2.</span> 参数键值对集合相等（忽略顺序）</span><br><span class="line"><span class="number">3.</span> 参数值在语义上等价</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-4-GAIA-评估机制"><a href="#12-4-GAIA-评估机制" class="headerlink" title="12.4 GAIA 评估机制"></a>12.4 GAIA 评估机制</h3><p><strong>准精确匹配流程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">归一化处理 → 精确匹配</span><br><span class="line">&quot;$1,234.56&quot; → &quot;1234.56&quot;</span><br><span class="line">&quot;Paris, London&quot; → &quot;berlin,london,paris&quot;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="第四部分：综合案例进阶"><a href="#第四部分：综合案例进阶" class="headerlink" title="第四部分：综合案例进阶"></a>第四部分：综合案例进阶</h1><h2 id="第十三章-智能旅行助手"><a href="#第十三章-智能旅行助手" class="headerlink" title="第十三章 智能旅行助手"></a>第十三章 智能旅行助手</h2><h3 id="13-1-项目概述"><a href="#13-1-项目概述" class="headerlink" title="13.1 项目概述"></a>13.1 项目概述</h3><p><strong>核心功能</strong>：</p>
+<ol>
+<li>智能行程规划（景点、餐饮、酒店）</li>
+<li>地图可视化</li>
+<li>预算计算</li>
+<li>行程编辑</li>
+<li>导出功能（PDF&#x2F;图片）</li>
+</ol>
+<h3 id="13-2-技术架构"><a href="#13-2-技术架构" class="headerlink" title="13.2 技术架构"></a>13.2 技术架构</h3><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>技术栈</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端层</td>
+<td>Vue3 + TypeScript</td>
+<td>用户交互、地图可视化</td>
+</tr>
+<tr>
+<td>后端层</td>
+<td>FastAPI</td>
+<td>API路由、业务逻辑</td>
+</tr>
+<tr>
+<td>智能体层</td>
+<td>HelloAgents</td>
+<td>任务分解、工具调用</td>
+</tr>
+<tr>
+<td>外部服务层</td>
+<td>高德API、LLM API</td>
+<td>底层数据与能力</td>
+</tr>
+</tbody></table>
+<h3 id="13-3-多智能体协作设计"><a href="#13-3-多智能体协作设计" class="headerlink" title="13.3 多智能体协作设计"></a>13.3 多智能体协作设计</h3><table>
+<thead>
+<tr>
+<th>Agent名称</th>
+<th>职责</th>
+<th>调用工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AttractionSearchAgent</td>
+<td>搜索景点</td>
+<td>高德POI搜索</td>
+</tr>
+<tr>
+<td>WeatherQueryAgent</td>
+<td>查询天气</td>
+<td>高德天气查询</td>
+</tr>
+<tr>
+<td>HotelAgent</td>
+<td>推荐酒店</td>
+<td>高德POI搜索</td>
+</tr>
+<tr>
+<td>PlannerAgent</td>
+<td>生成行程</td>
+<td>无，专注整合</td>
+</tr>
+</tbody></table>
+<h3 id="13-4-MCP-工具集成"><a href="#13-4-MCP-工具集成" class="headerlink" title="13.4 MCP 工具集成"></a>13.4 MCP 工具集成</h3><p>通过 <code>MCPTool</code> 接入高德地图 MCP 服务器，16个工具自动展开，Agent 可直接调用。</p>
+<hr>
+<h2 id="第十四章-自动化深度研究智能体"><a href="#第十四章-自动化深度研究智能体" class="headerlink" title="第十四章 自动化深度研究智能体"></a>第十四章 自动化深度研究智能体</h2><h3 id="14-1-深度研究的三大难点"><a href="#14-1-深度研究的三大难点" class="headerlink" title="14.1 深度研究的三大难点"></a>14.1 深度研究的三大难点</h3><table>
+<thead>
+<tr>
+<th>难点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>信息不断发散</td>
+<td>研究主题可能涉及多个分支</td>
+</tr>
+<tr>
+<td>事实快速更新</td>
+<td>需要持续跟踪最新信息</td>
+</tr>
+<tr>
+<td>高来源要求</td>
+<td>用户需要可追溯的引用</td>
+</tr>
+</tbody></table>
+<h3 id="14-2-智能体三大核心能力"><a href="#14-2-智能体三大核心能力" class="headerlink" title="14.2 智能体三大核心能力"></a>14.2 智能体三大核心能力</h3><table>
+<thead>
+<tr>
+<th>能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>问题剖析</td>
+<td>将开放主题拆解为可检索的查询</td>
+</tr>
+<tr>
+<td>多轮信息采集</td>
+<td>结合不同搜索API持续挖掘</td>
+</tr>
+<tr>
+<td>反思与总结</td>
+<td>识别知识空白，生成结构化总结</td>
+</tr>
+</tbody></table>
+<h3 id="14-3-三阶段流程"><a href="#14-3-三阶段流程" class="headerlink" title="14.3 三阶段流程"></a>14.3 三阶段流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">规划阶段（3-5个子任务JSON）</span><br><span class="line">        ↓</span><br><span class="line">执行阶段（搜索→总结→记录）</span><br><span class="line">        ↓</span><br><span class="line">报告阶段（整合生成报告）</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-4-三个-Agent-协作"><a href="#14-4-三个-Agent-协作" class="headerlink" title="14.4 三个 Agent 协作"></a>14.4 三个 Agent 协作</h3><table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>名称</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent 1</td>
+<td>TODO Planner</td>
+<td>3-5个子任务JSON</td>
+</tr>
+<tr>
+<td>Agent 2</td>
+<td>Task Summarizer</td>
+<td>Markdown总结+引用</td>
+</tr>
+<tr>
+<td>Agent 3</td>
+<td>Report Writer</td>
+<td>完整研究报告</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第十五章-构建赛博小镇"><a href="#第十五章-构建赛博小镇" class="headerlink" title="第十五章 构建赛博小镇"></a>第十五章 构建赛博小镇</h2><h3 id="15-1-核心功能"><a href="#15-1-核心功能" class="headerlink" title="15.1 核心功能"></a>15.1 核心功能</h3><ol>
+<li>智能 NPC 对话系统</li>
+<li>记忆系统（短期&#x2F;长期）</li>
+<li>好感度系统（5个等级）</li>
+<li>游戏化交互（2D像素风格）</li>
+<li>实时日志系统</li>
+</ol>
+<h3 id="15-2-技术架构"><a href="#15-2-技术架构" class="headerlink" title="15.2 技术架构"></a>15.2 技术架构</h3><table>
+<thead>
+<tr>
+<th>架构层级</th>
+<th>技术选型</th>
+<th>核心职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端层</td>
+<td>Godot 4.5</td>
+<td>游戏渲染、玩家控制</td>
+</tr>
+<tr>
+<td>后端层</td>
+<td>FastAPI</td>
+<td>API路由、NPC状态管理</td>
+</tr>
+<tr>
+<td>智能体层</td>
+<td>HelloAgents</td>
+<td>NPC智能核心、记忆管理</td>
+</tr>
+<tr>
+<td>外部服务层</td>
+<td>LLM API、Qdrant、SQLite</td>
+<td>模型能力、持久化</td>
+</tr>
+</tbody></table>
+<h3 id="15-3-好感度等级"><a href="#15-3-好感度等级" class="headerlink" title="15.3 好感度等级"></a>15.3 好感度等级</h3><table>
+<thead>
+<tr>
+<th>等级</th>
+<th>分数范围</th>
+<th>NPC行为表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>陌生</td>
+<td>0-20</td>
+<td>礼貌疏远，回复简短</td>
+</tr>
+<tr>
+<td>熟悉</td>
+<td>21-40</td>
+<td>愿意正常交流</td>
+</tr>
+<tr>
+<td>友好</td>
+<td>41-60</td>
+<td>把玩家当朋友</td>
+</tr>
+<tr>
+<td>亲密</td>
+<td>61-80</td>
+<td>信任玩家，愿意分享</td>
+</tr>
+<tr>
+<td>挚友</td>
+<td>81-100</td>
+<td>无话不谈</td>
+</tr>
+</tbody></table>
+<h3 id="15-4-性能优化：批量生成模式"><a href="#15-4-性能优化：批量生成模式" class="headerlink" title="15.4 性能优化：批量生成模式"></a>15.4 性能优化：批量生成模式</h3><ul>
+<li><strong>后台批量生成</strong>：定时为所有 NPC 生成背景对话（5分钟间隔）</li>
+<li><strong>玩家交互即时响应</strong>：直接调用专属 Agent 生成个性化回复</li>
+</ul>
+<hr>
+<h1 id="第五部分：毕业设计及未来展望"><a href="#第五部分：毕业设计及未来展望" class="headerlink" title="第五部分：毕业设计及未来展望"></a>第五部分：毕业设计及未来展望</h1><h2 id="第十六章-毕业设计"><a href="#第十六章-毕业设计" class="headerlink" title="第十六章 毕业设计"></a>第十六章 毕业设计</h2><h3 id="16-1-毕业设计形式"><a href="#16-1-毕业设计形式" class="headerlink" title="16.1 毕业设计形式"></a>16.1 毕业设计形式</h3><p>以<strong>开源项目</strong>形式提交到 Hello-Agents 共创仓库（<code>Co-creation-projects</code>目录）</p>
+<p><strong>提交内容</strong>：</p>
+<ul>
+<li>可运行的 Jupyter Notebook 或 Python 脚本</li>
+<li>完整依赖列表 <code>requirements.txt</code></li>
+<li>清晰的 <code>README.md</code> 说明文档</li>
+<li>可选：演示视频、截图、数据集</li>
+</ul>
+<h3 id="16-2-推荐选题方向"><a href="#16-2-推荐选题方向" class="headerlink" title="16.2 推荐选题方向"></a>16.2 推荐选题方向</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>生产力工具</td>
+<td>智能代码审查助手、智能会议助手</td>
+</tr>
+<tr>
+<td>学习辅助</td>
+<td>智能论文助手、智能编程导师</td>
+</tr>
+<tr>
+<td>创意娱乐</td>
+<td>智能故事生成器、智能游戏NPC</td>
+</tr>
+<tr>
+<td>数据分析</td>
+<td>智能数据分析师、智能舆情监控</td>
+</tr>
+<tr>
+<td>生活服务</td>
+<td>智能健康助手、智能理财助手</td>
+</tr>
+</tbody></table>
+<h3 id="16-3-开发流程"><a href="#16-3-开发流程" class="headerlink" title="16.3 开发流程"></a>16.3 开发流程</h3><ol>
+<li><strong>Fork 仓库</strong> → 创建开发分支</li>
+<li><strong>环境配置</strong> → 安装依赖、配置 API 密钥</li>
+<li><strong>项目开发</strong> → 编写代码、测试</li>
+<li><strong>文档编写</strong> → README、requirements.txt</li>
+<li><strong>提交 PR</strong> → 等待 Review、合并</li>
+</ol>
+<hr>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><h2 id="A-关键公式汇总"><a href="#A-关键公式汇总" class="headerlink" title="A. 关键公式汇总"></a>A. 关键公式汇总</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>公式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>语言模型概率</strong></td>
+<td>$P(w_1,w_2,\cdots,w_m) &#x3D; P(w_1) \cdot P(w_2|w_1) \cdots P(w_m|w_1,\cdots,w_{m-1})$</td>
+</tr>
+<tr>
+<td><strong>注意力机制</strong></td>
+<td>$\text{Attention}(Q,K,V) &#x3D; \text{softmax}\left(\frac{QK^{T}}{\sqrt{d_{k}}}\right)V$</td>
+</tr>
+<tr>
+<td><strong>Temperature采样</strong></td>
+<td>$p_i^{(T)} &#x3D; \frac{e^{z_i&#x2F;T}}{\sum_{j&#x3D;1}^k e^{z_j&#x2F;T}}$</td>
+</tr>
+<tr>
+<td><strong>SFT损失</strong></td>
+<td>$\mathcal{L}<em>{SFT} &#x3D; -\sum</em>{i&#x3D;1}^{N} \log P(y_i | x_i; \theta)$</td>
+</tr>
+<tr>
+<td><strong>GRPO目标</strong></td>
+<td>$J_{GRPO} &#x3D; \mathbb{E}\left[\frac{\pi_\theta}{\pi_{ref}}(r - \bar{r}<em>{group})\right] - \beta D</em>{KL}$</td>
+</tr>
+</tbody></table>
+<h2 id="B-框架选型指南"><a href="#B-框架选型指南" class="headerlink" title="B. 框架选型指南"></a>B. 框架选型指南</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐框架</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>快速原型验证</td>
+<td>Coze &#x2F; Dify</td>
+</tr>
+<tr>
+<td>企业级应用</td>
+<td>Dify &#x2F; LangGraph</td>
+</tr>
+<tr>
+<td>深度业务集成</td>
+<td>n8n</td>
+</tr>
+<tr>
+<td>群聊式协作</td>
+<td>AutoGen</td>
+</tr>
+<tr>
+<td>工业级工程</td>
+<td>AgentScope</td>
+</tr>
+<tr>
+<td>显式控制流</td>
+<td>LangGraph</td>
+</tr>
+</tbody></table>
+<h2 id="C-参考资源"><a href="#C-参考资源" class="headerlink" title="C. 参考资源"></a>C. 参考资源</h2><table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>在线文档</td>
+<td><a target="_blank" rel="noopener" href="https://hello-agents.datawhale.cc/">https://hello-agents.datawhale.cc</a></td>
+</tr>
+<tr>
+<td>GitHub 仓库</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/datawhalechina/hello-agents">https://github.com/datawhalechina/hello-agents</a></td>
+</tr>
+<tr>
+<td>MCP 官方</td>
+<td><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/">https://modelcontextprotocol.io</a></td>
+</tr>
+<tr>
+<td>A2A 官方</td>
+<td><a target="_blank" rel="noopener" href="https://a2a-protocol.org/">https://a2a-protocol.org</a></td>
+</tr>
+<tr>
+<td>ANP 官方</td>
+<td><a target="_blank" rel="noopener" href="https://agent-network-protocol.com/">https://agent-network-protocol.com</a></td>
+</tr>
+</tbody></table>
+<hr>
+<p><em>文档整理完毕 | 基于《Hello-Agents》全部 16 章内容系统性提取</em></p>
+
+    </div>
+
+    
+        <hr class="fhr">
+        <div id="vcomments"></div>
+    
+</div>
+    <div class="footer" id="footer">
+    <!-- <p><h4>版权所有 © 2020 | 作者:  | 主题 By <a class="theme-author" target="_blank" rel="noopener" href="https://github.com/Xunzhuo/hexo-theme-coder" style="font-size:14px; color: #969696">Coder</a></h4>
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        <span id="busuanzi_container_site_pv">本站浏览总访问量: <span id="busuanzi_value_site_pv"></span></span>
+        <span class="post-meta-divider">|</span>
+        <span id="busuanzi_container_site_uv">本站访问人数: <span id="busuanzi_value_site_uv"></span></span>
+     -->
+    <label class="el-switch el-switch-blue el-switch-sm" style="vertical-align: sub;">
+        <input type="checkbox" name="switch" id="update_style">
+        <span class="el-switch-style"></span>
+    </label>
+
+    <!--         <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1278548644'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/stat.php%3Fid%3D1278548644%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script> -->
+</p>
+</div>
+
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="">
+<input type="hidden" id="valine_appKey" value="">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+color: #698fca;
+}
+.v .vlist .vcard .vhead .vsys {
+color: #3a3e4a;
+}
+.v .vlist .vcard .vh .vmeta .vat {
+color: #638fd5;
+}
+.v .vlist .vcard .vhead .vnick {
+color: #6ba1ff;
+}
+.v a {
+color: #8696b1;
+}
+.v .vlist .vcard .vhead .vnick:hover {
+color: #669bfc;
+}
+</style>
+    <script type="text/javascript" color="173,174,173" opacity='1' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google-site-verification" content="TZE0rZyIqLl10trYu3BWBWa1Vmz6HFwhb2OcNEK4u-s" />
+     <link rel="shortcut icon" href= /img/huo.png >
+    <title>
+        Blog
+    </title>
+    <meta name="description" content=  >
+    <meta name="keywords" content=  >
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-home
+ replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            Claude Code 使用技术调研报告
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <h1 id="Claude-Code-使用技术调研报告"><a href="#Claude-Code-使用技术调研报告" class="headerlink" title="Claude Code 使用技术调研报告"></a>Claude Code 使用技术调研报告</h1><h2 id="一、项目概述"><a href="#一、项目概述" class="headerlink" title="一、项目概述"></a>一、项目概述</h2><p><strong>Claude Code</strong> 是一个运行在本地终端中的 <strong>agentic coding system</strong>，由 Anthropic 开发。它不是给建议的聊天机器人——它直接在你的项目目录中读代码、改文件、跑命令、调试程序，拥有完整的 shell 能力。</p>
+<h3 id="1-1-技术定位关键词"><a href="#1-1-技术定位关键词" class="headerlink" title="1.1 技术定位关键词"></a>1.1 技术定位关键词</h3><table>
+<thead>
+<tr>
+<th>定位关键词</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Terminal-native</strong></td>
+<td>原生 CLI 应用，不是 IDE 插件、不是 Web 界面、不是 API wrapper</td>
+</tr>
+<tr>
+<td><strong>Agentic</strong></td>
+<td>AI 自主决策工具调用链，不是”一问一答”的聊天模式</td>
+</tr>
+<tr>
+<td><strong>Coding system</strong></td>
+<td>面向软件工程全流程，不是通用问答工具</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-与同类工具的架构差异"><a href="#1-2-与同类工具的架构差异" class="headerlink" title="1.2 与同类工具的架构差异"></a>1.2 与同类工具的架构差异</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>架构模式</th>
+<th>运行位置</th>
+<th>工具执行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Claude Code</strong></td>
+<td>Terminal-native agentic loop</td>
+<td>本地进程</td>
+<td>直接 shell 执行</td>
+</tr>
+<tr>
+<td>Cursor &#x2F; Copilot</td>
+<td>IDE-integrated autocomplete + chat</td>
+<td>IDE 进程内</td>
+<td>LSP &#x2F; IDE API</td>
+</tr>
+<tr>
+<td>Aider</td>
+<td>CLI chat → git patch</td>
+<td>本地进程</td>
+<td>文件操作为主</td>
+</tr>
+<tr>
+<td>ChatGPT &#x2F; Claude.ai</td>
+<td>Cloud chat + artifacts</td>
+<td>浏览器&#x2F;云端</td>
+<td>沙箱容器</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、五层架构设计"><a href="#二、五层架构设计" class="headerlink" title="二、五层架构设计"></a>二、五层架构设计</h2><p>Claude Code 采用清晰的分层架构，从上到下共 5 层：</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>核心职责</th>
+<th>入口源码</th>
+<th>关键技术关键词</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>交互层</strong></td>
+<td>终端UI渲染、用户输入接收、消息展示</td>
+<td><code>src/screens/REPL.tsx</code></td>
+<td>React&#x2F;Ink、PromptInput</td>
+</tr>
+<tr>
+<td><strong>编排层</strong></td>
+<td>多轮对话管理、会话持久化、成本追踪</td>
+<td><code>src/QueryEngine.ts</code></td>
+<td>QueryEngine、transcript</td>
+</tr>
+<tr>
+<td><strong>核心循环层</strong></td>
+<td>单轮对话全流程处理：发请求→接收响应→执行工具→循环判定</td>
+<td><code>src/query.ts</code></td>
+<td>Agentic Loop、State</td>
+</tr>
+<tr>
+<td><strong>工具层</strong></td>
+<td>提供AI可调用的能力集合</td>
+<td><code>src/tools.ts</code> → <code>src/Tool.ts</code></td>
+<td>Tool接口、MCP</td>
+</tr>
+<tr>
+<td><strong>通信层</strong></td>
+<td>与Claude API的流式通信适配</td>
+<td><code>src/services/api/claude.ts</code></td>
+<td>Streaming、Provider</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-交互层技术细节"><a href="#2-1-交互层技术细节" class="headerlink" title="2.1 交互层技术细节"></a>2.1 交互层技术细节</h3><ul>
+<li>基于 <strong>React&#x2F;Ink</strong> 构建终端 UI</li>
+<li>用户输入经 <code>processUserInput()</code> 处理</li>
+<li>支持斜杠命令、文件附件、图片等输入形式</li>
+</ul>
+<h3 id="2-2-编排层技术细节"><a href="#2-2-编排层技术细节" class="headerlink" title="2.2 编排层技术细节"></a>2.2 编排层技术细节</h3><p>核心管理 4 类状态与能力：</p>
+<ul>
+<li><strong>会话状态</strong>：维护消息数组、工具权限上下文、文件历史快照</li>
+<li><strong>成本追踪</strong>：通过 <code>accumulateUsage()</code> &#x2F; <code>getTotalCost()</code> 累计 token 用量</li>
+<li><strong>Transcript持久化</strong>：通过 <code>recordTranscript()</code> 将对话序列化到磁盘，支持 <code>--resume</code> 恢复</li>
+<li><strong>文件历史管理</strong>：通过 <code>fileHistoryMakeSnapshot()</code> 在文件修改前创建快照</li>
+</ul>
+<h3 id="2-3-通信层技术细节"><a href="#2-3-通信层技术细节" class="headerlink" title="2.3 通信层技术细节"></a>2.3 通信层技术细节</h3><p>支持 <strong>7 种 API Provider</strong> 适配：</p>
+<ul>
+<li>AWS Bedrock</li>
+<li>Google Vertex</li>
+<li>Foundry</li>
+<li>OpenAI（兼容层）</li>
+<li>Gemini（兼容层）</li>
+<li>Grok (xAI)（兼容层）</li>
+<li>Anthropic Direct（默认）</li>
+</ul>
+<hr>
+<h2 id="三、Agentic-Loop-核心机制"><a href="#三、Agentic-Loop-核心机制" class="headerlink" title="三、Agentic Loop 核心机制"></a>三、Agentic Loop 核心机制</h2><p>Agentic Loop 是 Claude Code 实现 AI 自主多轮执行的核心机制，源码级实现位于 <code>src/query.ts</code> 的 <code>queryLoop()</code> 异步生成器函数中。</p>
+<h3 id="3-1-循环完整执行流程"><a href="#3-1-循环完整执行流程" class="headerlink" title="3.1 循环完整执行流程"></a>3.1 循环完整执行流程</h3><p>每次迭代包含 4 个标准阶段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">阶段1: 上下文预处理</span><br><span class="line">  原始 messagesForQuery</span><br><span class="line">    ↓ applyToolResultBudget()    — 工具结果预算截断</span><br><span class="line">    ↓ snipCompactIfNeeded()      — 历史Snip压缩</span><br><span class="line">    ↓ microcompact()             — 微压缩</span><br><span class="line">    ↓ applyCollapsesIfNeeded()   — 上下文折叠</span><br><span class="line">    ↓ autocompact()             — 自动压缩</span><br><span class="line">  → 处理后的 messagesForQuery → 发往API</span><br><span class="line"></span><br><span class="line">阶段2: 流式API调用</span><br><span class="line">  通过 deps.callModel() 发起流式请求</span><br><span class="line">  收集 assistantMessages[]、toolUseBlocks[]</span><br><span class="line"></span><br><span class="line">阶段3: 工具执行</span><br><span class="line">  StreamingToolExecutor（并行执行）或 runTools（串行执行）</span><br><span class="line">  生成 toolResults[]</span><br><span class="line"></span><br><span class="line">阶段4: 终止/继续判定</span><br><span class="line">  通过 needsFollowUp 判定是否需要继续循环</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-循环终止条件（9种）"><a href="#3-2-循环终止条件（9种）" class="headerlink" title="3.2 循环终止条件（9种）"></a>3.2 循环终止条件（9种）</h3><table>
+<thead>
+<tr>
+<th>终止原因</th>
+<th>触发机制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>blocking_limit</code></td>
+<td>Token计数超过硬限制</td>
+</tr>
+<tr>
+<td><code>image_error</code></td>
+<td>ImageSizeError&#x2F;ImageResizeError 异常</td>
+</tr>
+<tr>
+<td><code>model_error</code></td>
+<td>callModel() 抛出不可恢复异常</td>
+</tr>
+<tr>
+<td><code>aborted_streaming</code></td>
+<td>流式阶段检测到 abort</td>
+</tr>
+<tr>
+<td><code>prompt_too_long</code></td>
+<td>触发413错误且reactive compact无法恢复</td>
+</tr>
+<tr>
+<td><code>completed</code>（正常完成）</td>
+<td>AI未发出 tool_use</td>
+</tr>
+<tr>
+<td><code>completed</code>（API错误）</td>
+<td>限流、认证失败等不可恢复错误</td>
+</tr>
+<tr>
+<td><code>aborted_tools</code></td>
+<td>工具执行阶段检测到 abort</td>
+</tr>
+<tr>
+<td><code>max_turns</code></td>
+<td>轮次计数超过限制</td>
+</tr>
+</tbody></table>
+<h3 id="3-3-错误恢复路径（5类）"><a href="#3-3-错误恢复路径（5类）" class="headerlink" title="3.3 错误恢复路径（5类）"></a>3.3 错误恢复路径（5类）</h3><ol>
+<li><strong>正常工具循环</strong>：基础继续逻辑</li>
+<li><strong><code>max_output_tokens</code> 两阶段恢复</strong>：提升阶段 → 恢复阶段</li>
+<li><strong>Prompt-Too-Long 两级恢复</strong>：Context Collapse Drain → Reactive Compact</li>
+<li><strong>Stop Hook 阻塞重试</strong>：注入阻塞错误让 AI 重新思考</li>
+<li><strong>Token Budget 继续提示</strong>：注入 nudge 消息让 AI 加速收尾</li>
+</ol>
+<h3 id="3-4-模型降级（Fallback）机制"><a href="#3-4-模型降级（Fallback）机制" class="headerlink" title="3.4 模型降级（Fallback）机制"></a>3.4 模型降级（Fallback）机制</h3><p>主模型不可用时触发：</p>
+<ol>
+<li>清空已收集的 assistantMessages</li>
+<li>移除思维签名块</li>
+<li>切换到 fallbackModel</li>
+<li>生成系统消息后重新发起流式请求</li>
+</ol>
+<hr>
+<h2 id="四、上下文压缩系统"><a href="#四、上下文压缩系统" class="headerlink" title="四、上下文压缩系统"></a>四、上下文压缩系统</h2><p>采用 <strong>三层递进式策略</strong>，对应不同触发场景与严重程度：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>触发条件</th>
+<th>实现位置</th>
+<th>是否需要 API 调用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MicroCompact</strong></td>
+<td>单个工具输出过长</td>
+<td><code>microCompact.ts</code></td>
+<td>否</td>
+</tr>
+<tr>
+<td><strong>Session Memory Compact</strong></td>
+<td>自动压缩（需 feature flag）</td>
+<td><code>sessionMemoryCompact.ts</code></td>
+<td>否</td>
+</tr>
+<tr>
+<td><strong>传统 API 摘要</strong></td>
+<td>手动 <code>/compact</code> 或 SM 不可用时回退</td>
+<td><code>compact.ts</code></td>
+<td>是</td>
+</tr>
+</tbody></table>
+<h3 id="4-1-MicroCompact-局部压缩"><a href="#4-1-MicroCompact-局部压缩" class="headerlink" title="4.1 MicroCompact 局部压缩"></a>4.1 MicroCompact 局部压缩</h3><ul>
+<li>仅清理旧工具输出，不压缩全量对话</li>
+<li>可压缩工具白名单：Read、Bash、Grep、Glob、WebSearch、WebFetch、Edit、Write</li>
+<li>时间衰减配置：越旧的工具输出越容易被清理</li>
+</ul>
+<h3 id="4-2-Session-Memory（SM）压缩"><a href="#4-2-Session-Memory（SM）压缩" class="headerlink" title="4.2 Session Memory（SM）压缩"></a>4.2 Session Memory（SM）压缩</h3><ul>
+<li>无需调用摘要模型，直接使用预提取好的 Session Memory</li>
+<li>保留窗口计算：<code>minTokens=10K</code>、<code>minTextBlockMessages=5</code>、<code>maxTokens=40K</code></li>
+</ul>
+<h3 id="4-3-传统-API-摘要压缩"><a href="#4-3-传统-API-摘要压缩" class="headerlink" title="4.3 传统 API 摘要压缩"></a>4.3 传统 API 摘要压缩</h3><ul>
+<li>触发场景：手动执行 <code>/compact</code> 或 SM 不可用时的自动回退</li>
+<li>压缩后预留 50K token 总预算重新注入关键上下文</li>
+</ul>
+<h3 id="4-4-边界标记机制"><a href="#4-4-边界标记机制" class="headerlink" title="4.4 边界标记机制"></a>4.4 边界标记机制</h3><ul>
+<li><strong>全量压缩边界</strong>（<code>SystemCompactBoundaryMessage</code>）：携带 <code>compactType</code>、<code>preCompactTokenCount</code> 等元数据</li>
+<li><strong>MicroCompact 专用边界</strong>（<code>SystemMicrocompactBoundaryMessage</code>）：仅清理旧工具输出内容</li>
+</ul>
+<hr>
+<h2 id="五、工具系统设计"><a href="#五、工具系统设计" class="headerlink" title="五、工具系统设计"></a>五、工具系统设计</h2><h3 id="5-1-Tool-统一接口定义"><a href="#5-1-Tool-统一接口定义" class="headerlink" title="5.1 Tool 统一接口定义"></a>5.1 Tool 统一接口定义</h3><p>所有工具均实现 <code>Tool&lt;Input, Output, Progress&gt;</code> 泛型结构性类型，共 35+ 个字段：</p>
+<h4 id="核心四要素（必选基础字段）"><a href="#核心四要素（必选基础字段）" class="headerlink" title="核心四要素（必选基础字段）"></a>核心四要素（必选基础字段）</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>工具唯一标识</td>
+</tr>
+<tr>
+<td><code>description()</code></td>
+<td><code>(input) =&gt; Promise&lt;string&gt;</code></td>
+<td>动态描述方法</td>
+</tr>
+<tr>
+<td><code>inputSchema</code></td>
+<td><code>z.ZodType</code></td>
+<td>Zod schema，定义参数类型与校验</td>
+</tr>
+<tr>
+<td><code>call()</code></td>
+<td><code>(args, context, ...) =&gt; Promise&lt;ToolResult&gt;</code></td>
+<td>核心执行函数</td>
+</tr>
+</tbody></table>
+<h4 id="安全与权限相关字段"><a href="#安全与权限相关字段" class="headerlink" title="安全与权限相关字段"></a>安全与权限相关字段</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>validateInput()</code></td>
+<td>输入校验方法</td>
+</tr>
+<tr>
+<td><code>checkPermissions()</code></td>
+<td>权限检查方法</td>
+</tr>
+<tr>
+<td><code>isReadOnly()</code></td>
+<td>标记是否只读操作</td>
+</tr>
+<tr>
+<td><code>isDestructive()</code></td>
+<td>标记是否不可逆操作</td>
+</tr>
+<tr>
+<td><code>isConcurrencySafe()</code></td>
+<td>标记是否可并行执行</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-工具注册机制"><a href="#5-2-工具注册机制" class="headerlink" title="5.2 工具注册机制"></a>5.2 工具注册机制</h3><p>基础工具分为 4 类：</p>
+<ol>
+<li><strong>固定工具</strong>（17个）：Agent、Bash、FileRead、FileEdit、FileWrite、NotebookEdit、WebFetch、WebSearch、TodoWrite、AskUserQuestion、Skill、EnterPlanMode、ExitPlanMode、TaskOutput、Brief 等</li>
+<li><strong>条件工具</strong>：运行时检查后添加</li>
+<li><strong>Feature-flag工具</strong>：按功能开关添加</li>
+<li><strong>Ant-only工具</strong>：仅内部环境可用</li>
+</ol>
+<h3 id="5-3-工具调用完整链路（10步）"><a href="#5-3-工具调用完整链路（10步）" class="headerlink" title="5.3 工具调用完整链路（10步）"></a>5.3 工具调用完整链路（10步）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1. 大模型API返回 tool_use block</span><br><span class="line">2. StreamingToolExecutor.addTool() / runTools() 接收请求</span><br><span class="line">3. findToolByName() 查找工具实例</span><br><span class="line">4. validateInput() 做输入校验</span><br><span class="line">5. canUseTool() 触发权限UI（如Ask模式确认弹窗）</span><br><span class="line">6. checkPermissions() 做权限规则匹配</span><br><span class="line">7. 执行工具 call() 方法</span><br><span class="line">8. 返回 ToolResult&lt;Output&gt;</span><br><span class="line">9. mapToolResultToToolResultBlockParam() 转换格式</span><br><span class="line">10. 消息追加到上下文，进入下一轮</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-4-50-内置工具分类"><a href="#5-4-50-内置工具分类" class="headerlink" title="5.4 50+ 内置工具分类"></a>5.4 50+ 内置工具分类</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>包含工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件操作</td>
+<td>Read、Write、Edit、Glob、Grep、NotebookEdit</td>
+</tr>
+<tr>
+<td>命令执行</td>
+<td>Bash、PowerShell</td>
+</tr>
+<tr>
+<td>对话管理</td>
+<td>Agent、SendMessage、AskUserQuestion</td>
+</tr>
+<tr>
+<td>任务追踪</td>
+<td>TaskCreate、TaskUpdate、TaskList、TaskGet、TaskOutput、TaskStop</td>
+</tr>
+<tr>
+<td>Web能力</td>
+<td>WebFetch、WebSearch、WebBrowser</td>
+</tr>
+<tr>
+<td>规划与版本</td>
+<td>EnterPlanMode、ExitPlanMode、Worktree、TodoWrite、ToolSearch</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、权限与安全模型"><a href="#六、权限与安全模型" class="headerlink" title="六、权限与安全模型"></a>六、权限与安全模型</h2><h3 id="6-1-三级权限行为"><a href="#6-1-三级权限行为" class="headerlink" title="6.1 三级权限行为"></a>6.1 三级权限行为</h3><table>
+<thead>
+<tr>
+<th>权限行为</th>
+<th>含义</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Allow</strong></td>
+<td>自动放行</td>
+<td>Read工具读取项目内文件</td>
+</tr>
+<tr>
+<td><strong>Ask</strong></td>
+<td>弹出确认对话框</td>
+<td>Bash工具执行未知命令</td>
+</tr>
+<tr>
+<td><strong>Deny</strong></td>
+<td>直接拒绝</td>
+<td>尝试执行被禁止的命令</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-八层规则来源（优先级从低到高）"><a href="#6-2-八层规则来源（优先级从低到高）" class="headerlink" title="6.2 八层规则来源（优先级从低到高）"></a>6.2 八层规则来源（优先级从低到高）</h3><ol>
+<li><code>userSettings</code>：<code>~/.claude/settings.json</code></li>
+<li><code>projectSettings</code>：<code>.claude/settings.json</code></li>
+<li><code>localSettings</code>：<code>.claude/settings.local.json</code></li>
+<li><code>flagSettings</code>：<code>--settings</code> 命令行参数</li>
+<li><code>policySettings</code>：企业管理员下发的强制策略</li>
+<li><code>cliArg</code>：命令行 <code>--allow/--deny</code> 参数</li>
+<li><code>command</code>：Skill工具的 <code>allowedTools</code> 白名单</li>
+<li><code>session</code>：用户在当前对话中手动授权</li>
+</ol>
+<h3 id="6-3-六种权限模式"><a href="#6-3-六种权限模式" class="headerlink" title="6.3 六种权限模式"></a>6.3 六种权限模式</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>适用场景</th>
+<th>行为规则</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Default</td>
+<td>日常使用</td>
+<td>敏感操作逐一确认</td>
+</tr>
+<tr>
+<td>Plan Mode</td>
+<td>探索阶段</td>
+<td>仅允许读操作</td>
+</tr>
+<tr>
+<td>Accept Edits</td>
+<td>快速迭代</td>
+<td>文件编辑自动放行</td>
+</tr>
+<tr>
+<td>Don’t Ask</td>
+<td>减少打断</td>
+<td>尽量自动决策</td>
+</tr>
+<tr>
+<td>Auto</td>
+<td>信任AI场景</td>
+<td>通过 classifier 自动决策</td>
+</tr>
+<tr>
+<td>Bypass</td>
+<td>完全信任场景</td>
+<td>所有操作自动放行</td>
+</tr>
+</tbody></table>
+<h3 id="6-4-死循环防护"><a href="#6-4-死循环防护" class="headerlink" title="6.4 死循环防护"></a>6.4 死循环防护</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">DENIAL_LIMITS</span> = &#123;</span><br><span class="line">  <span class="attr">maxConsecutive</span>: <span class="number">3</span>,   <span class="comment">// 同一工具连续拒绝上限</span></span><br><span class="line">  <span class="attr">maxTotal</span>: <span class="number">20</span>,        <span class="comment">// 总拒绝次数上限</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、扩展性系统"><a href="#七、扩展性系统" class="headerlink" title="七、扩展性系统"></a>七、扩展性系统</h2><h3 id="7-1-Hook-生命周期钩子（27种事件）"><a href="#7-1-Hook-生命周期钩子（27种事件）" class="headerlink" title="7.1 Hook 生命周期钩子（27种事件）"></a>7.1 Hook 生命周期钩子（27种事件）</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>会话阶段</td>
+<td>SessionStart、SessionEnd、Setup</td>
+</tr>
+<tr>
+<td>用户交互</td>
+<td>UserPromptSubmit、Stop、StopFailure</td>
+</tr>
+<tr>
+<td>工具执行</td>
+<td>PreToolUse、PostToolUse、PostToolUseFailure</td>
+</tr>
+<tr>
+<td>权限</td>
+<td>PermissionRequest、PermissionDenied</td>
+</tr>
+<tr>
+<td>子Agent</td>
+<td>SubagentStart、SubagentStop</td>
+</tr>
+<tr>
+<td>压缩</td>
+<td>PreCompact、PostCompact</td>
+</tr>
+<tr>
+<td>协作</td>
+<td>TeammateIdle、TaskCreated、TaskCompleted</td>
+</tr>
+<tr>
+<td>MCP&#x2F;通知</td>
+<td>Elicitation、ElicitationResult、Notification</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-六种-Hook-类型"><a href="#7-2-六种-Hook-类型" class="headerlink" title="7.2 六种 Hook 类型"></a>7.2 六种 Hook 类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>执行方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>command</code></td>
+<td>Shell命令</td>
+<td>通用脚本、CI检查</td>
+</tr>
+<tr>
+<td><code>prompt</code></td>
+<td>注入到AI上下文</td>
+<td>代码规范提醒</td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td>启动子Agent执行</td>
+<td>复杂分析任务</td>
+</tr>
+<tr>
+<td><code>http</code></td>
+<td>HTTP请求</td>
+<td>远程服务、Webhook</td>
+</tr>
+<tr>
+<td><code>callback</code></td>
+<td>内部JS函数</td>
+<td>系统内置Hook</td>
+</tr>
+<tr>
+<td><code>function</code></td>
+<td>运行时注册的函数</td>
+<td>Agent&#x2F;Skill内部使用</td>
+</tr>
+</tbody></table>
+<h3 id="7-3-Skills-技能系统"><a href="#7-3-Skills-技能系统" class="headerlink" title="7.3 Skills 技能系统"></a>7.3 Skills 技能系统</h3><p><strong>核心理念</strong>：”复杂任务的关键不在代码逻辑，而在 Prompt 质量”</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Tool</th>
+<th>Skill</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>粒度</strong></td>
+<td>单个原子操作</td>
+<td>一套完整工作流</td>
+</tr>
+<tr>
+<td><strong>触发方式</strong></td>
+<td>AI自主选择</td>
+<td>用户 <code>/skill-name</code> 或AI匹配</td>
+</tr>
+<tr>
+<td><strong>本质</strong></td>
+<td>TypeScript执行逻辑</td>
+<td>Prompt + 权限配置的声明式封装</td>
+</tr>
+</tbody></table>
+<p><strong>Skill 的五个来源</strong>：</p>
+<ol>
+<li>内置命令（70+条）</li>
+<li>Bundled Skills（编译时打包）</li>
+<li>磁盘 Skills（主要来源）</li>
+<li>MCP Skills（动态发现）</li>
+<li>Legacy Commands（向后兼容）</li>
+</ol>
+<h3 id="7-4-MCP-协议支持"><a href="#7-4-MCP-协议支持" class="headerlink" title="7.4 MCP 协议支持"></a>7.4 MCP 协议支持</h3><ul>
+<li>所有MCP工具通过 <code>mcpInfo</code> 字段标记来源</li>
+<li>支持 server 级别的 blanket deny（全量拒绝）规则</li>
+<li>7种传输层实现</li>
+</ul>
+<hr>
+<h2 id="八、子-Agent-协作系统"><a href="#八、子-Agent-协作系统" class="headerlink" title="八、子 Agent 协作系统"></a>八、子 Agent 协作系统</h2><h3 id="8-1-四大子-Agent-类型"><a href="#8-1-四大子-Agent-类型" class="headerlink" title="8.1 四大子 Agent 类型"></a>8.1 四大子 Agent 类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>触发方式</th>
+<th>Tool协议</th>
+<th>结果返回</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>命名子Agent</strong></td>
+<td>主模型调用 <code>Agent(&#123; subagent_type &#125;)</code></td>
+<td>✅</td>
+<td>当前 turn 的 tool_result</td>
+</tr>
+<tr>
+<td><strong>AgentTool fork</strong></td>
+<td>省略 subagent_type + fork gate 开启</td>
+<td>✅</td>
+<td>async_launched → 任务通知</td>
+</tr>
+<tr>
+<td><strong>Slash command fork</strong></td>
+<td>用户执行 context: fork 的 slash command</td>
+<td>❌</td>
+<td>同步返回或隐藏 prompt 回注</td>
+</tr>
+<tr>
+<td><strong>runForkedAgent()</strong></td>
+<td>运行时内部服务直接调用</td>
+<td>❌</td>
+<td>调用方内部消费</td>
+</tr>
+</tbody></table>
+<h3 id="8-2-Agent-Definition-字段"><a href="#8-2-Agent-Definition-字段" class="headerlink" title="8.2 Agent Definition 字段"></a>8.2 Agent Definition 字段</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">code-reviewer</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">系统性代码审查</span></span><br><span class="line"><span class="attr">tools:</span> [<span class="string">Read</span>, <span class="string">Grep</span>, <span class="string">Glob</span>]</span><br><span class="line"><span class="attr">disallowedTools:</span> [<span class="string">Write</span>, <span class="string">Bash</span>]</span><br><span class="line"><span class="attr">prompt:</span> <span class="string">You</span> <span class="string">are</span> <span class="string">a</span> <span class="string">focused</span> <span class="string">reviewer...</span></span><br><span class="line"><span class="attr">model:</span> <span class="string">sonnet</span></span><br><span class="line"><span class="attr">effort:</span> <span class="string">medium</span></span><br><span class="line"><span class="attr">permissionMode:</span> <span class="string">acceptEdits</span></span><br><span class="line"><span class="attr">background:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">isolation:</span> <span class="string">worktree</span></span><br><span class="line"><span class="attr">maxTurns:</span> <span class="number">8</span></span><br><span class="line"><span class="attr">memory:</span> <span class="string">project</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-Worktree-隔离"><a href="#8-3-Worktree-隔离" class="headerlink" title="8.3 Worktree 隔离"></a>8.3 Worktree 隔离</h3><p>使用 git worktree 实现文件级隔离：</p>
+<ul>
+<li>创建：使用 agent id 派生 slug</li>
+<li>清理：无变更则移除；有变更则保留并返回路径</li>
+</ul>
+<hr>
+<h2 id="九、System-Prompt-动态组装"><a href="#九、System-Prompt-动态组装" class="headerlink" title="九、System Prompt 动态组装"></a>九、System Prompt 动态组装</h2><h3 id="9-1-三阶段处理管道"><a href="#9-1-三阶段处理管道" class="headerlink" title="9.1 三阶段处理管道"></a>9.1 三阶段处理管道</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getSystemPrompt()              →  string[]</span><br><span class="line">  ↓</span><br><span class="line">buildEffectiveSystemPrompt()   →  SystemPrompt</span><br><span class="line">  ↓</span><br><span class="line">buildSystemPromptBlocks()      →  TextBlockParam[]</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-静态区与动态区分界"><a href="#9-2-静态区与动态区分界" class="headerlink" title="9.2 静态区与动态区分界"></a>9.2 静态区与动态区分界</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[静态内容]                    → cacheScope: &#x27;global&#x27;（全局缓存）</span><br><span class="line">__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__</span><br><span class="line">[动态内容]                    → cacheScope: &#x27;org&#x27; 或不缓存</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-3-五级优先级选择"><a href="#9-3-五级优先级选择" class="headerlink" title="9.3 五级优先级选择"></a>9.3 五级优先级选择</h3><table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>名称</th>
+<th>触发条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Override</td>
+<td>overrideSystemPrompt 非空</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Coordinator</td>
+<td>COORDINATOR_MODE feature + 环境变量</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Agent</td>
+<td>mainThreadAgentDefinition 存在</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Custom</td>
+<td>–system-prompt 参数指定</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Default</td>
+<td>无特殊条件</td>
+</tr>
+</tbody></table>
+<h3 id="9-4-CLAUDE-md-多级合并"><a href="#9-4-CLAUDE-md-多级合并" class="headerlink" title="9.4 CLAUDE.md 多级合并"></a>9.4 CLAUDE.md 多级合并</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/.claude/CLAUDE.md          ← 用户全局</span><br><span class="line">  └── /project/CLAUDE.md     ← 项目根目录</span><br><span class="line">        └── /project/src/CLAUDE.md  ← 子目录</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十、核心技术指标"><a href="#十、核心技术指标" class="headerlink" title="十、核心技术指标"></a>十、核心技术指标</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内置工具数量</td>
+<td>50+</td>
+</tr>
+<tr>
+<td>Hook 事件类型</td>
+<td>27种</td>
+</tr>
+<tr>
+<td>Hook 执行类型</td>
+<td>6种</td>
+</tr>
+<tr>
+<td>权限规则来源</td>
+<td>8层</td>
+</tr>
+<tr>
+<td>权限模式</td>
+<td>6种</td>
+</tr>
+<tr>
+<td>API Provider 支持</td>
+<td>7种</td>
+</tr>
+<tr>
+<td>默认上下文窗口</td>
+<td>200K tokens</td>
+</tr>
+<tr>
+<td>压缩保留窗口</td>
+<td>min: 10K &#x2F; max: 40K tokens</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十一、关键技术设计原则"><a href="#十一、关键技术设计原则" class="headerlink" title="十一、关键技术设计原则"></a>十一、关键技术设计原则</h2><h3 id="1-流式优先-Streaming-first"><a href="#1-流式优先-Streaming-first" class="headerlink" title="1. 流式优先 (Streaming-first)"></a>1. 流式优先 (Streaming-first)</h3><ul>
+<li>所有API通信均采用流式传输</li>
+<li>工具执行与流式传输并行</li>
+<li>模型降级容错机制</li>
+</ul>
+<h3 id="2-工具即能力-Tool-as-Capability"><a href="#2-工具即能力-Tool-as-Capability" class="headerlink" title="2. 工具即能力 (Tool as Capability)"></a>2. 工具即能力 (Tool as Capability)</h3><ul>
+<li>工具标准化：所有工具均为 <code>Tool&lt;Input, Output, Progress&gt;</code> 结构化类型</li>
+<li>动态工具组装：每次API调用时重新组装</li>
+<li>MCP工具原生支持</li>
+</ul>
+<h3 id="3-权限即边界-Permission-as-Boundary"><a href="#3-权限即边界-Permission-as-Boundary" class="headerlink" title="3. 权限即边界 (Permission as Boundary)"></a>3. 权限即边界 (Permission as Boundary)</h3><ul>
+<li>双重权限校验：validateInput() → checkPermissions()</li>
+<li>多来源权限规则</li>
+<li>灵活匹配规则</li>
+</ul>
+<h3 id="4-上下文即记忆-Context-as-Memory"><a href="#4-上下文即记忆-Context-as-Memory" class="headerlink" title="4. 上下文即记忆 (Context as Memory)"></a>4. 上下文即记忆 (Context as Memory)</h3><ul>
+<li>动态System Prompt组装</li>
+<li>自动上下文压缩</li>
+<li>压缩状态保持</li>
+</ul>
+<hr>
+<h2 id="十二、技术启示与应用建议"><a href="#十二、技术启示与应用建议" class="headerlink" title="十二、技术启示与应用建议"></a>十二、技术启示与应用建议</h2><h3 id="12-1-对-AI-Agent-开发的启示"><a href="#12-1-对-AI-Agent-开发的启示" class="headerlink" title="12.1 对 AI Agent 开发的启示"></a>12.1 对 AI Agent 开发的启示</h3><ol>
+<li><strong>Agentic Loop 是核心</strong>：区别于传统聊天机器人的关键</li>
+<li><strong>流式架构优先</strong>：提升用户体验和执行效率</li>
+<li><strong>上下文管理是瓶颈</strong>：需要多层压缩策略</li>
+<li><strong>安全与体验平衡</strong>：Allow&#x2F;Ask&#x2F;Deny 三级体系</li>
+</ol>
+<h3 id="12-2-架构设计参考"><a href="#12-2-架构设计参考" class="headerlink" title="12.2 架构设计参考"></a>12.2 架构设计参考</h3><table>
+<thead>
+<tr>
+<th>设计模式</th>
+<th>Claude Code 实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分层架构</td>
+<td>五层架构，边界清晰</td>
+</tr>
+<tr>
+<td>状态机</td>
+<td>State 对象不可变传递</td>
+</tr>
+<tr>
+<td>工厂模式</td>
+<td>buildTool() 工厂函数</td>
+</tr>
+<tr>
+<td>策略模式</td>
+<td>多种压缩策略可选</td>
+</tr>
+<tr>
+<td>观察者模式</td>
+<td>Hook 生命周期系统</td>
+</tr>
+</tbody></table>
+<h3 id="12-3-可借鉴的技术点"><a href="#12-3-可借鉴的技术点" class="headerlink" title="12.3 可借鉴的技术点"></a>12.3 可借鉴的技术点</h3><ol>
+<li><strong>Tool 接口标准化</strong>：泛型 + Zod schema</li>
+<li><strong>权限系统</strong>：来源优先级 + 匹配规则</li>
+<li><strong>压缩策略</strong>：三层递进 + 边界标记</li>
+<li><strong>Skill 封装</strong>：Prompt 即能力</li>
+<li><strong>子 Agent 协作</strong>：命名&#x2F;Fork&#x2F;Teammate 分层</li>
+</ol>
+<hr>
+<h2 id="十三、参考资源"><a href="#十三、参考资源" class="headerlink" title="十三、参考资源"></a>十三、参考资源</h2><ul>
+<li>文档源站：<a target="_blank" rel="noopener" href="https://ccb.agent-aura.top/">https://ccb.agent-aura.top</a></li>
+<li>Claude Code 官网：<a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/claude-code">https://docs.anthropic.com/en/docs/claude-code</a></li>
+<li>GitHub Stars: 50.3k+</li>
+</ul>
+<hr>
+<p><em>报告生成时间：2026-05-17</em></p>
+
+    </div>
+
+    
+        <hr class="fhr">
+        <div id="vcomments"></div>
+    
+</div>
+    <div class="footer" id="footer">
+    <!-- <p><h4>版权所有 © 2020 | 作者:  | 主题 By <a class="theme-author" target="_blank" rel="noopener" href="https://github.com/Xunzhuo/hexo-theme-coder" style="font-size:14px; color: #969696">Coder</a></h4>
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        <span id="busuanzi_container_site_pv">本站浏览总访问量: <span id="busuanzi_value_site_pv"></span></span>
+        <span class="post-meta-divider">|</span>
+        <span id="busuanzi_container_site_uv">本站访问人数: <span id="busuanzi_value_site_uv"></span></span>
+     -->
+    <label class="el-switch el-switch-blue el-switch-sm" style="vertical-align: sub;">
+        <input type="checkbox" name="switch" id="update_style">
+        <span class="el-switch-style"></span>
+    </label>
+
+    <!--         <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1278548644'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/stat.php%3Fid%3D1278548644%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script> -->
+</p>
+</div>
+
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="">
+<input type="hidden" id="valine_appKey" value="">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+color: #698fca;
+}
+.v .vlist .vcard .vhead .vsys {
+color: #3a3e4a;
+}
+.v .vlist .vcard .vh .vmeta .vat {
+color: #638fd5;
+}
+.v .vlist .vcard .vhead .vnick {
+color: #6ba1ff;
+}
+.v a {
+color: #8696b1;
+}
+.v .vlist .vcard .vhead .vnick:hover {
+color: #669bfc;
+}
+</style>
+    <script type="text/javascript" color="173,174,173" opacity='1' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+</body>
+</html>
