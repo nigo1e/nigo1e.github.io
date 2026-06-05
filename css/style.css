@@ -1268,6 +1268,49 @@ label.el-checkbox {
 .vcomments {
   margin-top: 20px;
 }
+.highlight {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 5px;
+  background: #23241f;
+}
+.highlight table {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-spacing: 0;
+}
+.highlight table td,
+.highlight table th,
+.highlight table tr {
+  border: 0;
+  padding: 0;
+}
+.highlight .gutter {
+  width: 1%;
+  user-select: none;
+}
+.highlight .gutter pre,
+.highlight .code pre {
+  margin: 0;
+  padding: 0.5em;
+  background: #23241f;
+  color: #f8f8f2;
+  line-height: 1.45;
+}
+.highlight .gutter pre {
+  color: #75715e;
+  text-align: right;
+}
+.highlight .code {
+  width: 100%;
+}
+.highlight .code pre {
+  overflow-x: auto;
+}
+.highlight .line {
+  min-height: 1.45em;
+}
 @media screen and (max-width: 800px) {
   .hd {
     width: 90%;
