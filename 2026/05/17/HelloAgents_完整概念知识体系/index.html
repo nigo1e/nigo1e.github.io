@@ -213,9 +213,11 @@
 <td>传感器</td>
 </tr>
 </tbody></table>
-<h4 id="Agent-Loop（智能体循环）"><a href="#Agent-Loop（智能体循环）" class="headerlink" title="Agent Loop（智能体循环）"></a>Agent Loop（智能体循环）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">感知（Perception）→ 思考（Thought）→ 行动（Action）→ 环境反馈 → 循环</span><br></pre></td></tr></table></figure>
+<h4 id="Agent-Loop（智能体循环）"><a href="#Agent-Loop（智能体循环）" class="headerlink" title="Agent Loop（智能体循环）"></a>Agent Loop（智能体循环）</h4><pre class="doc-code-block">感知（Perception）→ 思考（Thought）→ 行动（Action）→ 环境反馈 → 循环</pre>
 
-<h4 id="Thought-Action-Observation-交互协议"><a href="#Thought-Action-Observation-交互协议" class="headerlink" title="Thought-Action-Observation 交互协议"></a>Thought-Action-Observation 交互协议</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thought: 用户想知道北京的天气。我需要调用天气查询工具。</span><br><span class="line">Action: get_weather(<span class="string">&quot;北京&quot;</span>)</span><br><span class="line">Observation: 北京当前天气为晴，气温<span class="number">25</span>摄氏度。</span><br></pre></td></tr></table></figure>
+<h4 id="Thought-Action-Observation-交互协议"><a href="#Thought-Action-Observation-交互协议" class="headerlink" title="Thought-Action-Observation 交互协议"></a>Thought-Action-Observation 交互协议</h4><pre class="doc-code-block">Thought: 用户想知道北京的天气。我需要调用天气查询工具。
+Action: get_weather("北京")
+Observation: 北京当前天气为晴，气温25摄氏度。</pre>
 
 <h3 id="1-6-关键术语表"><a href="#1-6-关键术语表" class="headerlink" title="1.6 关键术语表"></a>1.6 关键术语表</h3><table>
 <thead>
@@ -305,7 +307,7 @@
 </tbody></table>
 <h3 id="2-2-规则驱动聊天机器人"><a href="#2-2-规则驱动聊天机器人" class="headerlink" title="2.2 规则驱动聊天机器人"></a>2.2 规则驱动聊天机器人</h3><h4 id="ELIZA-系统（1966年）"><a href="#ELIZA-系统（1966年）" class="headerlink" title="ELIZA 系统（1966年）"></a>ELIZA 系统（1966年）</h4><p><strong>开发者</strong>：约瑟夫·魏泽鲍姆</p>
 <p><strong>算法流程</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">关键词识别 → 分解规则 → 代词转换 → 重组规则 → 生成回应</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">关键词识别 → 分解规则 → 代词转换 → 重组规则 → 生成回应</pre>
 
 <p><strong>局限性</strong>：</p>
 <ul>
@@ -402,14 +404,16 @@
 <td>胜利+1</td>
 </tr>
 </tbody></table>
-<h4 id="预训练-微调范式"><a href="#预训练-微调范式" class="headerlink" title="预训练-微调范式"></a>预训练-微调范式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">预训练阶段（自监督学习，海量文本）→ 微调阶段（少量标注数据）</span><br></pre></td></tr></table></figure>
+<h4 id="预训练-微调范式"><a href="#预训练-微调范式" class="headerlink" title="预训练-微调范式"></a>预训练-微调范式</h4><pre class="doc-code-block">预训练阶段（自监督学习，海量文本）→ 微调阶段（少量标注数据）</pre>
 
 <p><strong>涌现能力</strong>：</p>
 <ul>
 <li>上下文学习</li>
 <li>思维链推理</li>
 </ul>
-<h3 id="2-5-LLM驱动智能体架构"><a href="#2-5-LLM驱动智能体架构" class="headerlink" title="2.5 LLM驱动智能体架构"></a>2.5 LLM驱动智能体架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">外部环境 → 感知模块 → 规划模块+LLM → 执行模块 → 反馈 → 循环</span><br><span class="line">                    ↑</span><br><span class="line">               记忆模块</span><br></pre></td></tr></table></figure>
+<h3 id="2-5-LLM驱动智能体架构"><a href="#2-5-LLM驱动智能体架构" class="headerlink" title="2.5 LLM驱动智能体架构"></a>2.5 LLM驱动智能体架构</h3><pre class="doc-code-block">外部环境 → 感知模块 → 规划模块+LLM → 执行模块 → 反馈 → 循环
+                    ↑
+               记忆模块</pre>
 
 <hr>
 <h2 id="第三章-大语言模型基础"><a href="#第三章-大语言模型基础" class="headerlink" title="第三章 大语言模型基础"></a>第三章 大语言模型基础</h2><h3 id="3-1-语言模型演进"><a href="#3-1-语言模型演进" class="headerlink" title="3.1 语言模型演进"></a>3.1 语言模型演进</h3><h4 id="统计语言模型与-N-gram"><a href="#统计语言模型与-N-gram" class="headerlink" title="统计语言模型与 N-gram"></a>统计语言模型与 N-gram</h4><p><strong>核心公式（概率链式法则）</strong>：<br>$$P(w_1,w_2,\cdots,w_m) &#x3D; P(w_1) \cdot P(w_2|w_1) \cdots P(w_m|w_1,\cdots,w_{m-1})$$</p>
@@ -417,7 +421,7 @@
 <p><strong>致命缺陷</strong>：数据稀疏性、泛化能力差</p>
 <h4 id="神经网络与词嵌入"><a href="#神经网络与词嵌入" class="headerlink" title="神经网络与词嵌入"></a>神经网络与词嵌入</h4><p><strong>词嵌入</strong>：将词映射为高维连续向量，语义相近的词向量位置相近</p>
 <p><strong>词向量的语义运算</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector(&#x27;King&#x27;) - vector(&#x27;Man&#x27;) + vector(&#x27;Woman&#x27;) ≈ vector(&#x27;Queen&#x27;)</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">vector('King') - vector('Man') + vector('Woman') ≈ vector('Queen')</pre>
 
 <h4 id="RNN-与-LSTM"><a href="#RNN-与-LSTM" class="headerlink" title="RNN 与 LSTM"></a>RNN 与 LSTM</h4><p><strong>RNN</strong>：引入隐藏状态，赋予”记忆”能力</p>
 <p><strong>LSTM门控机制</strong>：</p>
@@ -453,7 +457,7 @@
 <p><strong>解决方案</strong>：使用正弦和余弦函数生成位置向量<br>$$PE_{(pos,2i)} &#x3D; \sin\left(\frac{pos}{10000^{2i&#x2F;d_{\text{model}}}}\right)$$</p>
 <h3 id="3-3-Decoder-Only-架构"><a href="#3-3-Decoder-Only-架构" class="headerlink" title="3.3 Decoder-Only 架构"></a>3.3 Decoder-Only 架构</h3><p><strong>核心思想</strong>：语言的核心任务是”预测下一个最可能出现的词”</p>
 <p><strong>自回归 (Autoregressive) 工作模式</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">输入 → 预测下一个词 → 添加到输入 → 再次预测 → 循环</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">输入 → 预测下一个词 → 添加到输入 → 再次预测 → 循环</pre>
 
 <p><strong>优势</strong>：</p>
 <ul>
@@ -779,7 +783,22 @@
 <td>消除不必要抽象层</td>
 </tr>
 </tbody></table>
-<h3 id="7-2-框架目录结构"><a href="#7-2-框架目录结构" class="headerlink" title="7.2 框架目录结构"></a>7.2 框架目录结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">hello_agents/</span><br><span class="line">├── core/                     # 核心框架层</span><br><span class="line">│   ├── agent.py              # Agent基类</span><br><span class="line">│   ├── llm.py               # HelloAgentsLLM统一接口</span><br><span class="line">│   ├── message.py           # 消息系统</span><br><span class="line">│   └── config.py            # 配置管理</span><br><span class="line">├── agents/                   # Agent实现层</span><br><span class="line">│   ├── simple_agent.py       # SimpleAgent</span><br><span class="line">│   ├── react_agent.py        # ReActAgent</span><br><span class="line">│   ├── reflection_agent.py   # ReflectionAgent</span><br><span class="line">│   └── plan_solve_agent.py  # PlanAndSolveAgent</span><br><span class="line">├── tools/                    # 工具系统层</span><br><span class="line">│   ├── base.py              # 工具基类</span><br><span class="line">│   ├── registry.py           # 工具注册机制</span><br><span class="line">│   └── builtin/              # 内置工具集</span><br><span class="line">└──</span><br></pre></td></tr></table></figure>
+<h3 id="7-2-框架目录结构"><a href="#7-2-框架目录结构" class="headerlink" title="7.2 框架目录结构"></a>7.2 框架目录结构</h3><pre class="doc-code-block">hello_agents/
+├── core/                     # 核心框架层
+│   ├── agent.py              # Agent基类
+│   ├── llm.py               # HelloAgentsLLM统一接口
+│   ├── message.py           # 消息系统
+│   └── config.py            # 配置管理
+├── agents/                   # Agent实现层
+│   ├── simple_agent.py       # SimpleAgent
+│   ├── react_agent.py        # ReActAgent
+│   ├── reflection_agent.py   # ReflectionAgent
+│   └── plan_solve_agent.py  # PlanAndSolveAgent
+├── tools/                    # 工具系统层
+│   ├── base.py              # 工具基类
+│   ├── registry.py           # 工具注册机制
+│   └── builtin/              # 内置工具集
+└──</pre>
 
 <h3 id="7-3-四种-Agent-范式对比"><a href="#7-3-四种-Agent-范式对比" class="headerlink" title="7.3 四种 Agent 范式对比"></a>7.3 四种 Agent 范式对比</h3><table>
 <thead>
@@ -967,7 +986,7 @@
 </tr>
 </tbody></table>
 <p><strong>评分公式</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">综合分数 = 相关性权重 × 相关性 + 新近性权重 × 新近性</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">综合分数 = 相关性权重 × 相关性 + 新近性权重 × 新近性</pre>
 
 <hr>
 <h2 id="第十章-智能体通信协议"><a href="#第十章-智能体通信协议" class="headerlink" title="第十章 智能体通信协议"></a>第十章 智能体通信协议</h2><h3 id="10-1-三大协议定位对比"><a href="#10-1-三大协议定位对比" class="headerlink" title="10.1 三大协议定位对比"></a>10.1 三大协议定位对比</h3><table>
@@ -1024,7 +1043,11 @@
 </tr>
 </tbody></table>
 <p><strong>架构</strong>：Host-Client-Server 三层架构</p>
-<h3 id="10-3-协议选择指南"><a href="#10-3-协议选择指南" class="headerlink" title="10.3 协议选择指南"></a>10.3 协议选择指南</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">需要访问外部服务？ → 是 → 使用 MCP</span><br><span class="line">                          ↓ 否</span><br><span class="line">           需要多智能体协作？</span><br><span class="line">              ├─ 小规模（2-10个）→ 使用 A2A</span><br><span class="line">              └─ 大规模网络 → 使用 ANP</span><br></pre></td></tr></table></figure>
+<h3 id="10-3-协议选择指南"><a href="#10-3-协议选择指南" class="headerlink" title="10.3 协议选择指南"></a>10.3 协议选择指南</h3><pre class="doc-code-block">需要访问外部服务？ → 是 → 使用 MCP
+                          ↓ 否
+           需要多智能体协作？
+              ├─ 小规模（2-10个）→ 使用 A2A
+              └─ 大规模网络 → 使用 ANP</pre>
 
 <hr>
 <h2 id="第十一章-Agentic-RL"><a href="#第十一章-Agentic-RL" class="headerlink" title="第十一章 Agentic-RL"></a>第十一章 Agentic-RL</h2><h3 id="11-1-为什么需要强化学习"><a href="#11-1-为什么需要强化学习" class="headerlink" title="11.1 为什么需要强化学习"></a>11.1 为什么需要强化学习</h3><table>
@@ -1047,7 +1070,9 @@
 <td>可精确优化累积奖励</td>
 </tr>
 </tbody></table>
-<h3 id="11-2-LLM-训练全景图"><a href="#11-2-LLM-训练全景图" class="headerlink" title="11.2 LLM 训练全景图"></a>11.2 LLM 训练全景图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">预训练（因果语言建模）→ 后训练（SFT → RM → RL微调）</span><br><span class="line">                                           ↓</span><br><span class="line">                                     PPO / GRPO</span><br></pre></td></tr></table></figure>
+<h3 id="11-2-LLM-训练全景图"><a href="#11-2-LLM-训练全景图" class="headerlink" title="11.2 LLM 训练全景图"></a>11.2 LLM 训练全景图</h3><pre class="doc-code-block">预训练（因果语言建模）→ 后训练（SFT → RM → RL微调）
+                                           ↓
+                                     PPO / GRPO</pre>
 
 <h3 id="11-3-后训练三步骤"><a href="#11-3-后训练三步骤" class="headerlink" title="11.3 后训练三步骤"></a>11.3 后训练三步骤</h3><table>
 <thead>
@@ -1130,7 +1155,11 @@
 <h3 id="11-6-LoRA-参数高效微调"><a href="#11-6-LoRA-参数高效微调" class="headerlink" title="11.6 LoRA 参数高效微调"></a>11.6 LoRA 参数高效微调</h3><p><strong>核心思想</strong>：参数变化可用低秩矩阵表示<br>$$\Delta W &#x3D; BA, \quad B \in \mathbb{R}^{d \times r}, A \in \mathbb{R}^{r \times k}$$</p>
 <p><strong>效果</strong>（Qwen3-0.6B）：全量微调 ~12GB → LoRA ~1-6GB</p>
 <hr>
-<h2 id="第十二章-智能体性能评估"><a href="#第十二章-智能体性能评估" class="headerlink" title="第十二章 智能体性能评估"></a>第十二章 智能体性能评估</h2><h3 id="12-1-评估体系架构"><a href="#12-1-评估体系架构" class="headerlink" title="12.1 评估体系架构"></a>12.1 评估体系架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Tool 层（评估工具化封装）</span><br><span class="line">        ↓</span><br><span class="line">Evaluator 层（评估执行）</span><br><span class="line">        ↓</span><br><span class="line">Dataset 层（数据管理）</span><br></pre></td></tr></table></figure>
+<h2 id="第十二章-智能体性能评估"><a href="#第十二章-智能体性能评估" class="headerlink" title="第十二章 智能体性能评估"></a>第十二章 智能体性能评估</h2><h3 id="12-1-评估体系架构"><a href="#12-1-评估体系架构" class="headerlink" title="12.1 评估体系架构"></a>12.1 评估体系架构</h3><pre class="doc-code-block">Tool 层（评估工具化封装）
+        ↓
+Evaluator 层（评估执行）
+        ↓
+Dataset 层（数据管理）</pre>
 
 <h3 id="12-2-核心评估基准"><a href="#12-2-核心评估基准" class="headerlink" title="12.2 核心评估基准"></a>12.2 核心评估基准</h3><table>
 <thead>
@@ -1161,10 +1190,15 @@
 </tr>
 </tbody></table>
 <h3 id="12-3-BFCL-评估机制"><a href="#12-3-BFCL-评估机制" class="headerlink" title="12.3 BFCL 评估机制"></a>12.3 BFCL 评估机制</h3><p><strong>AST匹配算法</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 匹配规则</span></span><br><span class="line"><span class="number">1.</span> 函数名必须精确匹配</span><br><span class="line"><span class="number">2.</span> 参数键值对集合相等（忽略顺序）</span><br><span class="line"><span class="number">3.</span> 参数值在语义上等价</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># 匹配规则
+1. 函数名必须精确匹配
+2. 参数键值对集合相等（忽略顺序）
+3. 参数值在语义上等价</pre>
 
 <h3 id="12-4-GAIA-评估机制"><a href="#12-4-GAIA-评估机制" class="headerlink" title="12.4 GAIA 评估机制"></a>12.4 GAIA 评估机制</h3><p><strong>准精确匹配流程</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">归一化处理 → 精确匹配</span><br><span class="line">&quot;$1,234.56&quot; → &quot;1234.56&quot;</span><br><span class="line">&quot;Paris, London&quot; → &quot;berlin,london,paris&quot;</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">归一化处理 → 精确匹配
+"$1,234.56" → "1234.56"
+"Paris, London" → "berlin,london,paris"</pre>
 
 <hr>
 <h1 id="第四部分：综合案例进阶"><a href="#第四部分：综合案例进阶" class="headerlink" title="第四部分：综合案例进阶"></a>第四部分：综合案例进阶</h1><h2 id="第十三章-智能旅行助手"><a href="#第十三章-智能旅行助手" class="headerlink" title="第十三章 智能旅行助手"></a>第十三章 智能旅行助手</h2><h3 id="13-1-项目概述"><a href="#13-1-项目概述" class="headerlink" title="13.1 项目概述"></a>13.1 项目概述</h3><p><strong>核心功能</strong>：</p>
@@ -1275,7 +1309,11 @@
 <td>识别知识空白，生成结构化总结</td>
 </tr>
 </tbody></table>
-<h3 id="14-3-三阶段流程"><a href="#14-3-三阶段流程" class="headerlink" title="14.3 三阶段流程"></a>14.3 三阶段流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">规划阶段（3-5个子任务JSON）</span><br><span class="line">        ↓</span><br><span class="line">执行阶段（搜索→总结→记录）</span><br><span class="line">        ↓</span><br><span class="line">报告阶段（整合生成报告）</span><br></pre></td></tr></table></figure>
+<h3 id="14-3-三阶段流程"><a href="#14-3-三阶段流程" class="headerlink" title="14.3 三阶段流程"></a>14.3 三阶段流程</h3><pre class="doc-code-block">规划阶段（3-5个子任务JSON）
+        ↓
+执行阶段（搜索→总结→记录）
+        ↓
+报告阶段（整合生成报告）</pre>
 
 <h3 id="14-4-三个-Agent-协作"><a href="#14-4-三个-Agent-协作" class="headerlink" title="14.4 三个 Agent 协作"></a>14.4 三个 Agent 协作</h3><table>
 <thead>

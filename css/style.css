@@ -1268,6 +1268,31 @@ label.el-checkbox {
 .vcomments {
   margin-top: 20px;
 }
+.post-content pre.doc-code-block {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 16px 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  border: 1px solid #3a3a3a;
+  border-radius: 5px;
+  background: #23241f;
+  color: #f8f8f2;
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.bg_while .post-content pre.doc-code-block {
+  border-color: #d0d7de;
+  background: #f6f8fa;
+  color: #24292f;
+}
 @media screen and (max-width: 800px) {
   .hd {
     width: 90%;

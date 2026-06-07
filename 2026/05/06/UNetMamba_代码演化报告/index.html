@@ -50,7 +50,47 @@
 </ol>
 <hr>
 <h2 id="1-代码血缘全景图"><a href="#1-代码血缘全景图" class="headerlink" title="1. 代码血缘全景图"></a>1. 代码血缘全景图</h2><p>以下是通过逐文件 <code>diff</code> 比对所确认的代码继承关系：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">UNetMamba/</span><br><span class="line">├── train.py                     ← GeoSeg/train_supervision.py（直接改造）</span><br><span class="line">├── loveda_test.py               ← GeoSeg/loveda_test.py（直接改造）</span><br><span class="line">├── vaihingen_test.py            ← GeoSeg/vaihingen_test.py（直接改造）</span><br><span class="line">├── potsdam_test.py              ← GeoSeg/potsdam_test.py（直接改造）</span><br><span class="line">│</span><br><span class="line">├── config/</span><br><span class="line">│   └── loveda/unetmamba.py     ← GeoSeg/config/loveda/unetformer.py（深度改造）</span><br><span class="line">│   └── vaihingen/unetmamba.py  ← GeoSeg/config/vaihingen/unetformer.py（深度改造）</span><br><span class="line">│</span><br><span class="line">├── tools/</span><br><span class="line">│   ├── cfg.py                  ← GeoSeg/tools/cfg.py（完全相同）</span><br><span class="line">│   ├── metric.py               ← GeoSeg/tools/metric.py（完全相同）</span><br><span class="line">│   └── loveda_mask_convert.py  ← GeoSeg/tools/（完全相同）</span><br><span class="line">│</span><br><span class="line">└── unetmamba_model/</span><br><span class="line">    ├── datasets/</span><br><span class="line">    │   ├── loveda_dataset.py   ← GeoSeg/geoseg/datasets/（删1空行，其余相同）</span><br><span class="line">    │   ├── vaihingen_dataset.py← GeoSeg/geoseg/datasets/（引入 IMG_SIZE 变量，适配多尺度）</span><br><span class="line">    │   └── transform.py        ← GeoSeg/geoseg/datasets/（仅修正1处拼写错误）</span><br><span class="line">    │</span><br><span class="line">    ├── losses/                  ← GeoSeg/geoseg/losses/（完整复制，仅改2处）</span><br><span class="line">    │   └── useful_loss.py      ← 关键修改：UnetFormerLoss → UnetMambaLoss，ignore_index 255→6</span><br><span class="line">    │</span><br><span class="line">    ├── models/</span><br><span class="line">    │   ├── BANet.py            ← GeoSeg/geoseg/models/BANet.py（完全相同，0 diff）</span><br><span class="line">    │   ├── DCSwin.py           ← GeoSeg/geoseg/models/DCSwin.py（完全相同，0 diff）</span><br><span class="line">    │   ├── ABCNet.py           ← GeoSeg/geoseg/models/ABCNet.py（完全相同）</span><br><span class="line">    │   ├── MANet.py            ← GeoSeg/geoseg/models/MANet.py（完全相同）</span><br><span class="line">    │   ├── UNetFormer.py       ← GeoSeg/geoseg/models/UNetFormer.py（3处小修改）</span><br><span class="line">    │   ├── ResT.py             ← ResT/models/rest.py（删分类头，改返回值为多尺度特征）</span><br><span class="line">    │   ├── SwinUMamba.py       ← Swin-UMamba/SwinUMambaD.py（移植解码器基础结构）</span><br><span class="line">    │   ├── RS3Mamba.py         ← 自行实现（使用 VSSMEncoder + UNetFormer解码器组件）</span><br><span class="line">    │   ├── CMUNet.py           ← 参考 Swin-Unet 风格</span><br><span class="line">    │   └── ★ UNetMamba.py     ← 核心新增（见第6节）</span><br><span class="line">    │</span><br><span class="line">    ├── classification/</span><br><span class="line">    │   └── models/vmamba.py    ← VMamba/classification/models/vmamba.py（新增 CrossScan 纯</span><br><span class="line">    │                              PyTorch 实现作为 Triton 不可用时的回退）</span><br><span class="line">    │</span><br><span class="line">    └── mamba_sys.py            ← VMamba/vmamba.py（完全相同，0 diff）</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">UNetMamba/
+├── train.py                     ← GeoSeg/train_supervision.py（直接改造）
+├── loveda_test.py               ← GeoSeg/loveda_test.py（直接改造）
+├── vaihingen_test.py            ← GeoSeg/vaihingen_test.py（直接改造）
+├── potsdam_test.py              ← GeoSeg/potsdam_test.py（直接改造）
+│
+├── config/
+│   └── loveda/unetmamba.py     ← GeoSeg/config/loveda/unetformer.py（深度改造）
+│   └── vaihingen/unetmamba.py  ← GeoSeg/config/vaihingen/unetformer.py（深度改造）
+│
+├── tools/
+│   ├── cfg.py                  ← GeoSeg/tools/cfg.py（完全相同）
+│   ├── metric.py               ← GeoSeg/tools/metric.py（完全相同）
+│   └── loveda_mask_convert.py  ← GeoSeg/tools/（完全相同）
+│
+└── unetmamba_model/
+    ├── datasets/
+    │   ├── loveda_dataset.py   ← GeoSeg/geoseg/datasets/（删1空行，其余相同）
+    │   ├── vaihingen_dataset.py← GeoSeg/geoseg/datasets/（引入 IMG_SIZE 变量，适配多尺度）
+    │   └── transform.py        ← GeoSeg/geoseg/datasets/（仅修正1处拼写错误）
+    │
+    ├── losses/                  ← GeoSeg/geoseg/losses/（完整复制，仅改2处）
+    │   └── useful_loss.py      ← 关键修改：UnetFormerLoss → UnetMambaLoss，ignore_index 255→6
+    │
+    ├── models/
+    │   ├── BANet.py            ← GeoSeg/geoseg/models/BANet.py（完全相同，0 diff）
+    │   ├── DCSwin.py           ← GeoSeg/geoseg/models/DCSwin.py（完全相同，0 diff）
+    │   ├── ABCNet.py           ← GeoSeg/geoseg/models/ABCNet.py（完全相同）
+    │   ├── MANet.py            ← GeoSeg/geoseg/models/MANet.py（完全相同）
+    │   ├── UNetFormer.py       ← GeoSeg/geoseg/models/UNetFormer.py（3处小修改）
+    │   ├── ResT.py             ← ResT/models/rest.py（删分类头，改返回值为多尺度特征）
+    │   ├── SwinUMamba.py       ← Swin-UMamba/SwinUMambaD.py（移植解码器基础结构）
+    │   ├── RS3Mamba.py         ← 自行实现（使用 VSSMEncoder + UNetFormer解码器组件）
+    │   ├── CMUNet.py           ← 参考 Swin-Unet 风格
+    │   └── ★ UNetMamba.py     ← 核心新增（见第6节）
+    │
+    ├── classification/
+    │   └── models/vmamba.py    ← VMamba/classification/models/vmamba.py（新增 CrossScan 纯
+    │                              PyTorch 实现作为 Triton 不可用时的回退）
+    │
+    └── mamba_sys.py            ← VMamba/vmamba.py（完全相同，0 diff）</pre>
 
 <hr>
 <h2 id="2-第一层继承：GeoSeg-作为工程骨架"><a href="#2-第一层继承：GeoSeg-作为工程骨架" class="headerlink" title="2. 第一层继承：GeoSeg 作为工程骨架"></a>2. 第一层继承：GeoSeg 作为工程骨架</h2><h3 id="2-1-GeoSeg-是什么"><a href="#2-1-GeoSeg-是什么" class="headerlink" title="2.1 GeoSeg 是什么"></a>2.1 GeoSeg 是什么</h3><p>GeoSeg 是 Libo Wang 团队开发并维护的一个遥感图像语义分割代码框架，其中包含了 BANet、UNetFormer、FTUNetFormer 等多个模型的实现，以及配套的数据集处理、损失函数、训练流程等基础设施。</p>
@@ -113,11 +153,37 @@
 <li><strong>对比方法实现</strong>（BANet、DCSwin、MANet 用于消融对比实验）</li>
 </ul>
 <h3 id="2-3-训练脚本的改动（train-py）"><a href="#2-3-训练脚本的改动（train-py）" class="headerlink" title="2.3 训练脚本的改动（train.py）"></a>2.3 训练脚本的改动（train.py）</h3><p><code>train.py</code> 从 GeoSeg 的 <code>train_supervision.py</code> 改造，主要改动：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GeoSeg 的原始代码</span></span><br><span class="line"><span class="keyword">from</span> train_supervision <span class="keyword">import</span> *   <span class="comment"># 测试脚本引用</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba 的修改</span></span><br><span class="line"><span class="keyword">from</span> train <span class="keyword">import</span> *               <span class="comment"># 重命名为 train.py 后同步更新引用</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 新增：HuggingFace 镜像配置（国内访问用）</span></span><br><span class="line">os.environ[<span class="string">&quot;HF_ENDPOINT&quot;</span>] = <span class="string">&quot;https://hf-mirror.com&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 精度报告格式调整（百分比化）</span></span><br><span class="line">eval_value = &#123;<span class="string">&#x27;mIoU&#x27;</span>: mIoU*<span class="number">100.0</span>, <span class="string">&#x27;F1&#x27;</span>: F1*<span class="number">100.0</span>, <span class="string">&#x27;OA&#x27;</span>: OA*<span class="number">100.0</span>&#125;</span><br><span class="line"><span class="comment"># 原来：eval_value = &#123;&#x27;mIoU&#x27;: mIoU, &#x27;F1&#x27;: F1, &#x27;OA&#x27;: OA&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除了 GeoSeg 中多余的数据集分支（whubuilding、massbuilding、cropland）</span></span><br><span class="line"><span class="comment"># 因为 UNetMamba 只关注 LoveDA 和 Vaihingen</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># GeoSeg 的原始代码
+from train_supervision import *   # 测试脚本引用
+
+# UNetMamba 的修改
+from train import *               # 重命名为 train.py 后同步更新引用
+
+# 新增：HuggingFace 镜像配置（国内访问用）
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+
+# 精度报告格式调整（百分比化）
+eval_value = {'mIoU': mIoU*100.0, 'F1': F1*100.0, 'OA': OA*100.0}
+# 原来：eval_value = {'mIoU': mIoU, 'F1': F1, 'OA': OA}
+
+# 删除了 GeoSeg 中多余的数据集分支（whubuilding、massbuilding、cropland）
+# 因为 UNetMamba 只关注 LoveDA 和 Vaihingen</pre>
 
 <p><strong>改动逻辑</strong>：<code>*100.0</code> 是因为 GeoSeg 的指标是 [0, 1] 范围，UNetMamba 改为报告 [0, 100] 百分比，更符合论文中的表格展示习惯。</p>
 <h3 id="2-4-损失函数的精准修改（useful-loss-py）"><a href="#2-4-损失函数的精准修改（useful-loss-py）" class="headerlink" title="2.4 损失函数的精准修改（useful_loss.py）"></a>2.4 损失函数的精准修改（useful_loss.py）</h3><p>这是整个 losses 目录中唯一改动的文件，改动极其精准：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GeoSeg（UNetFormer 的损失函数）</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UnetFormerLoss</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, ignore_index=<span class="number">255</span></span>):</span><br><span class="line">        <span class="comment"># Dice Loss + Soft-CE 联合损失</span></span><br><span class="line">        loss = JointLoss(SoftCrossEntropyLoss(..., ignore_index=ignore_index),</span><br><span class="line">                         DiceLoss(smooth=<span class="number">0.05</span>, ignore_index=ignore_index), <span class="number">1.0</span>, <span class="number">1.0</span>)</span><br><span class="line">        <span class="comment"># ↑ 注意：参数是两个独立的位置参数 1.0, 1.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba 的修改</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UnetMambaLoss</span>(nn.Module):    <span class="comment"># ← 仅改了类名</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, ignore_index=<span class="number">6</span></span>):   <span class="comment"># ← ignore_index 从 255 改为 6</span></span><br><span class="line">        loss = JointLoss(SoftCrossEntropyLoss(...),</span><br><span class="line">                         DiceLoss(smooth=<span class="number">0.05</span>, ...), (<span class="number">1.0</span>, <span class="number">1.0</span>))  <span class="comment"># ← 改为元组形式</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># GeoSeg（UNetFormer 的损失函数）
+class UnetFormerLoss(nn.Module):
+    def __init__(self, ignore_index=255):
+        # Dice Loss + Soft-CE 联合损失
+        loss = JointLoss(SoftCrossEntropyLoss(..., ignore_index=ignore_index),
+                         DiceLoss(smooth=0.05, ignore_index=ignore_index), 1.0, 1.0)
+        # ↑ 注意：参数是两个独立的位置参数 1.0, 1.0
+
+# UNetMamba 的修改
+class UnetMambaLoss(nn.Module):    # ← 仅改了类名
+    def __init__(self, ignore_index=6):   # ← ignore_index 从 255 改为 6
+        loss = JointLoss(SoftCrossEntropyLoss(...),
+                         DiceLoss(smooth=0.05, ...), (1.0, 1.0))  # ← 改为元组形式</pre>
 
 <p><strong>改动逻辑</strong>：</p>
 <ol>
@@ -126,7 +192,8 @@
 <li><strong><code>(1.0, 1.0)</code> 元组</strong>：修复了一个潜在的 API 兼容性问题（某些版本的 <code>JointLoss</code> 需要元组）</li>
 </ol>
 <hr>
-<h2 id="3-第二层移植：VMamba-的-VSS-Block-核心算子"><a href="#3-第二层移植：VMamba-的-VSS-Block-核心算子" class="headerlink" title="3. 第二层移植：VMamba 的 VSS Block 核心算子"></a>3. 第二层移植：VMamba 的 VSS Block 核心算子</h2><h3 id="3-1-mamba-sys-py：完整原样复制"><a href="#3-1-mamba-sys-py：完整原样复制" class="headerlink" title="3.1 mamba_sys.py：完整原样复制"></a>3.1 mamba_sys.py：完整原样复制</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ diff VMamba/vmamba.py UNetMamba/unetmamba_model/mamba_sys.py</span><br><span class="line">（无输出）  <span class="comment"># 0 差异，完全相同</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-第二层移植：VMamba-的-VSS-Block-核心算子"><a href="#3-第二层移植：VMamba-的-VSS-Block-核心算子" class="headerlink" title="3. 第二层移植：VMamba 的 VSS Block 核心算子"></a>3. 第二层移植：VMamba 的 VSS Block 核心算子</h2><h3 id="3-1-mamba-sys-py：完整原样复制"><a href="#3-1-mamba-sys-py：完整原样复制" class="headerlink" title="3.1 mamba_sys.py：完整原样复制"></a>3.1 mamba_sys.py：完整原样复制</h3><pre class="doc-code-block">$ diff VMamba/vmamba.py UNetMamba/unetmamba_model/mamba_sys.py
+（无输出）  # 0 差异，完全相同</pre>
 
 <p><code>mamba_sys.py</code> 是 VMamba 源码 <code>vmamba.py</code> 的<strong>原样拷贝</strong>，包含：</p>
 <ul>
@@ -138,52 +205,200 @@
 <p>这个文件在 UNetMamba 代码库中作为<strong>备用参考实现</strong>存在，实际的解码器不直接用 <code>mamba_sys.py</code> 中的 VSSM，而是用下面介绍的经过增强的版本。</p>
 <h3 id="3-2-classification-models-vmamba-py：新增-PyTorch-回退实现"><a href="#3-2-classification-models-vmamba-py：新增-PyTorch-回退实现" class="headerlink" title="3.2 classification&#x2F;models&#x2F;vmamba.py：新增 PyTorch 回退实现"></a>3.2 classification&#x2F;models&#x2F;vmamba.py：新增 PyTorch 回退实现</h3><p>这是 UNetMamba 对 VMamba 代码最实质性的修改，也是工程价值最高的改动。</p>
 <p><strong>原始 VMamba 的问题</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VMamba 原版（需要 Triton 编译）</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">from</span> .csm_triton <span class="keyword">import</span> cross_scan_fn, cross_merge_fn</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    <span class="keyword">from</span> csm_triton <span class="keyword">import</span> cross_scan_fn, cross_merge_fn</span><br><span class="line"><span class="comment"># 如果 Triton 不可用（Windows 环境、部分 CUDA 版本），直接报错</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># VMamba 原版（需要 Triton 编译）
+try:
+    from .csm_triton import cross_scan_fn, cross_merge_fn
+except:
+    from csm_triton import cross_scan_fn, cross_merge_fn
+# 如果 Triton 不可用（Windows 环境、部分 CUDA 版本），直接报错</pre>
 
 <p><strong>UNetMamba 的改进</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># UNetMamba 版本：新增纯 PyTorch 实现</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">from</span> .csm_triton <span class="keyword">import</span> CrossScanTriton, CrossMergeTriton, CrossScanTriton1b1</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    <span class="keyword">from</span> csm_triton <span class="keyword">import</span> CrossScanTriton, CrossMergeTriton, CrossScanTriton1b1</span><br><span class="line"></span><br><span class="line"><span class="comment"># === 以下是 UNetMamba 新增的纯 PyTorch CrossScan 实现 ===</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CrossScan</span>(torch.autograd.Function):</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">ctx, x: torch.Tensor</span>):</span><br><span class="line">        B, C, H, W = x.shape</span><br><span class="line">        ctx.shape = (B, C, H, W)</span><br><span class="line">        xs = x.new_empty((B, <span class="number">4</span>, C, H * W))</span><br><span class="line">        xs[:, <span class="number">0</span>] = x.flatten(<span class="number">2</span>, <span class="number">3</span>)                      <span class="comment"># 方向1：正向行扫描</span></span><br><span class="line">        xs[:, <span class="number">1</span>] = x.transpose(dim0=<span class="number">2</span>, dim1=<span class="number">3</span>).flatten(<span class="number">2</span>, <span class="number">3</span>)  <span class="comment"># 方向2：正向列扫描</span></span><br><span class="line">        xs[:, <span class="number">2</span>:<span class="number">4</span>] = torch.flip(xs[:, <span class="number">0</span>:<span class="number">2</span>], dims=[-<span class="number">1</span>])  <span class="comment"># 方向3,4：翻转</span></span><br><span class="line">        <span class="keyword">return</span> xs</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">ctx, ys: torch.Tensor</span>):</span><br><span class="line">        <span class="comment"># ... 对应的反向传播</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># UNetMamba 版本：新增纯 PyTorch 实现
+try:
+    from .csm_triton import CrossScanTriton, CrossMergeTriton, CrossScanTriton1b1
+except:
+    from csm_triton import CrossScanTriton, CrossMergeTriton, CrossScanTriton1b1
+
+# === 以下是 UNetMamba 新增的纯 PyTorch CrossScan 实现 ===
+class CrossScan(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, x: torch.Tensor):
+        B, C, H, W = x.shape
+        ctx.shape = (B, C, H, W)
+        xs = x.new_empty((B, 4, C, H * W))
+        xs[:, 0] = x.flatten(2, 3)                      # 方向1：正向行扫描
+        xs[:, 1] = x.transpose(dim0=2, dim1=3).flatten(2, 3)  # 方向2：正向列扫描
+        xs[:, 2:4] = torch.flip(xs[:, 0:2], dims=[-1])  # 方向3,4：翻转
+        return xs
+
+    @staticmethod
+    def backward(ctx, ys: torch.Tensor):
+        # ... 对应的反向传播</pre>
 
 <p>还新增了消融实验专用的 <code>CrossScan_Ab_2direction</code> 类（只扫描 2 个方向，用于验证 4 方向比 2 方向好）。</p>
 <p><strong>工程意义</strong>：Triton 在 Windows 平台上不可用，这个 PyTorch 回退实现使得 UNetMamba 可以在 Windows 开发环境下运行和调试，而不仅限于 Linux GPU 服务器。</p>
 <h3 id="3-3-UNetMamba-如何使用-VSS-Block"><a href="#3-3-UNetMamba-如何使用-VSS-Block" class="headerlink" title="3.3 UNetMamba 如何使用 VSS Block"></a>3.3 UNetMamba 如何使用 VSS Block</h3><p>核心模型 <code>UNetMamba.py</code> 的第一行：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> unetmamba_model.classification.models.vmamba <span class="keyword">import</span> VSSM, LayerNorm2d, VSSBlock, Permute</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">from unetmamba_model.classification.models.vmamba import VSSM, LayerNorm2d, VSSBlock, Permute</pre>
 
 <p><code>VSSBlock</code> 在解码器中的使用方式：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">VSSLayer</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;解码器中的 VSS Block 堆叠层&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim, depth=<span class="number">2</span>, ...</span>):</span><br><span class="line">        <span class="variable language_">self</span>.blocks = nn.ModuleList([</span><br><span class="line">            VSSBlock(</span><br><span class="line">                hidden_dim=dim,</span><br><span class="line">                drop_path=...,</span><br><span class="line">                d_state=<span class="number">16</span>,    <span class="comment"># 状态维度，SSM 的记忆容量</span></span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(depth)])  <span class="comment"># depth=2，每个解码阶段 2 个 VSS Block</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">class VSSLayer(nn.Module):
+    """解码器中的 VSS Block 堆叠层"""
+    def __init__(self, dim, depth=2, ...):
+        self.blocks = nn.ModuleList([
+            VSSBlock(
+                hidden_dim=dim,
+                drop_path=...,
+                d_state=16,    # 状态维度，SSM 的记忆容量
+            )
+            for i in range(depth)])  # depth=2，每个解码阶段 2 个 VSS Block</pre>
 
 <hr>
 <h2 id="4-第三层改造：ResT-编码器的精简与适配"><a href="#4-第三层改造：ResT-编码器的精简与适配" class="headerlink" title="4. 第三层改造：ResT 编码器的精简与适配"></a>4. 第三层改造：ResT 编码器的精简与适配</h2><h3 id="4-1-改造内容"><a href="#4-1-改造内容" class="headerlink" title="4.1 改造内容"></a>4.1 改造内容</h3><p><code>UNetMamba/unetmamba_model/models/ResT.py</code> 从 <code>ResT/models/rest.py</code> 改造，主要修改：</p>
 <p><strong>① 删除分类头</strong>（最关键的改动）：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ResT 原版（图像分类任务）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">    ...</span><br><span class="line">    x = <span class="variable language_">self</span>.avg_pool(x).flatten(<span class="number">1</span>)   <span class="comment"># 全局平均池化</span></span><br><span class="line">    x = <span class="variable language_">self</span>.head(x)                   <span class="comment"># 分类输出</span></span><br><span class="line">    <span class="keyword">return</span> x                           <span class="comment"># 返回1D类别向量</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba 改造版（语义分割任务）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">    ...</span><br><span class="line">    x1 = x  <span class="comment"># 保存 Stage1 特征 (H/4, W/4)</span></span><br><span class="line">    ...</span><br><span class="line">    x2 = x  <span class="comment"># 保存 Stage2 特征 (H/8, W/8)</span></span><br><span class="line">    ...</span><br><span class="line">    x3 = x  <span class="comment"># 保存 Stage3 特征 (H/16, W/16)</span></span><br><span class="line">    ...</span><br><span class="line">    x4 = x  <span class="comment"># 保存 Stage4 特征 (H/32, W/32)</span></span><br><span class="line">    <span class="keyword">return</span> x1, x2, x3, x4   <span class="comment"># 返回多尺度特征图（供解码器用 skip connection）</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># ResT 原版（图像分类任务）
+def forward(self, x):
+    ...
+    x = self.avg_pool(x).flatten(1)   # 全局平均池化
+    x = self.head(x)                   # 分类输出
+    return x                           # 返回1D类别向量
+
+# UNetMamba 改造版（语义分割任务）
+def forward(self, x):
+    ...
+    x1 = x  # 保存 Stage1 特征 (H/4, W/4)
+    ...
+    x2 = x  # 保存 Stage2 特征 (H/8, W/8)
+    ...
+    x3 = x  # 保存 Stage3 特征 (H/16, W/16)
+    ...
+    x4 = x  # 保存 Stage4 特征 (H/32, W/32)
+    return x1, x2, x3, x4   # 返回多尺度特征图（供解码器用 skip connection）</pre>
 
 <p>这一改动是从<strong>分类骨干网络</strong>到<strong>分割编码器</strong>的本质转变——不再输出单一类别预测，而是输出四个尺度的特征图，供 U 形解码器的各个阶段使用。</p>
 <p><strong>② 删除 <code>Stem</code> 类</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原版 ResT 中的 Stem 类（用于更深的 ResT 变体）</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Stem</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_ch=<span class="number">3</span>, out_ch=<span class="number">64</span>, with_pos=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.conv = nn.Conv2d(in_ch, out_ch, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, ...)</span><br><span class="line">        <span class="variable language_">self</span>.max_pool = nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, ...)</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba 的 ResT.py 删除了 Stem 类</span></span><br><span class="line"><span class="comment"># 因为 ResT-Lite 使用 OverlapPatchEmbed 而非 Stem，Stem 只存在于其他变体中</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># 原版 ResT 中的 Stem 类（用于更深的 ResT 变体）
+class Stem(nn.Module):
+    def __init__(self, in_ch=3, out_ch=64, with_pos=False):
+        self.conv = nn.Conv2d(in_ch, out_ch, kernel_size=7, stride=2, ...)
+        self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, ...)
+        ...
+
+# UNetMamba 的 ResT.py 删除了 Stem 类
+# 因为 ResT-Lite 使用 OverlapPatchEmbed 而非 Stem，Stem 只存在于其他变体中</pre>
 
 <p><strong>③ 删除分类相关组件</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原版</span></span><br><span class="line"><span class="variable language_">self</span>.avg_pool = nn.AdaptiveAvgPool2d((<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line"><span class="variable language_">self</span>.head = nn.Linear(embed_dims[<span class="number">3</span>], num_classes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba：这两行被直接删除</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># 原版
+self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+self.head = nn.Linear(embed_dims[3], num_classes)
+
+# UNetMamba：这两行被直接删除</pre>
 
 <p><strong>④ 细节格式清理</strong>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原版（有空格）</span></span><br><span class="line">kernel_size=sr_ratio + <span class="number">1</span></span><br><span class="line">drop_path=dpr[cur + i]</span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba（无空格，更紧凑）</span></span><br><span class="line">kernel_size=sr_ratio+<span class="number">1</span></span><br><span class="line">drop_path=dpr[cur+i]</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># 原版（有空格）
+kernel_size=sr_ratio + 1
+drop_path=dpr[cur + i]
+
+# UNetMamba（无空格，更紧凑）
+kernel_size=sr_ratio+1
+drop_path=dpr[cur+i]</pre>
 
 <h3 id="4-2-rest-lite-工厂函数"><a href="#4-2-rest-lite-工厂函数" class="headerlink" title="4.2 rest_lite 工厂函数"></a>4.2 <code>rest_lite</code> 工厂函数</h3><p><code>UNetMamba.py</code> 中定义了一个简单的工厂函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rest_lite</span>(<span class="params">pretrained=<span class="literal">True</span>, weight_path=<span class="string">&#x27;pretrain_weights/rest_lite.pth&#x27;</span>, **kwargs</span>):</span><br><span class="line">    model = ResT(</span><br><span class="line">        embed_dims=[<span class="number">64</span>, <span class="number">128</span>, <span class="number">256</span>, <span class="number">512</span>],  <span class="comment"># ResT-Lite 的通道配置</span></span><br><span class="line">        num_heads=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">8</span>],</span><br><span class="line">        mlp_ratios=[<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>],</span><br><span class="line">        qkv_bias=<span class="literal">True</span>,</span><br><span class="line">        depths=[<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>],            <span class="comment"># 每阶段 2 个 ETB Block</span></span><br><span class="line">        sr_ratios=[<span class="number">8</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>],         <span class="comment"># EMSA 的空间缩减率</span></span><br><span class="line">        apply_transform=<span class="literal">True</span>,           <span class="comment"># 启用 PA 位置编码</span></span><br><span class="line">        **kwargs</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> pretrained <span class="keyword">and</span> weight_path <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="comment"># 只加载名称匹配的权重（兼容性加载）</span></span><br><span class="line">        old_dict = torch.load(weight_path)</span><br><span class="line">        model_dict = model.state_dict()</span><br><span class="line">        old_dict = &#123;k: v <span class="keyword">for</span> k, v <span class="keyword">in</span> old_dict.items() <span class="keyword">if</span> (k <span class="keyword">in</span> model_dict)&#125;</span><br><span class="line">        model_dict.update(old_dict)</span><br><span class="line">        model.load_state_dict(model_dict)</span><br><span class="line">    <span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">def rest_lite(pretrained=True, weight_path='pretrain_weights/rest_lite.pth', **kwargs):
+    model = ResT(
+        embed_dims=[64, 128, 256, 512],  # ResT-Lite 的通道配置
+        num_heads=[1, 2, 4, 8],
+        mlp_ratios=[4, 4, 4, 4],
+        qkv_bias=True,
+        depths=[2, 2, 2, 2],            # 每阶段 2 个 ETB Block
+        sr_ratios=[8, 4, 2, 1],         # EMSA 的空间缩减率
+        apply_transform=True,           # 启用 PA 位置编码
+        **kwargs
+    )
+    if pretrained and weight_path is not None:
+        # 只加载名称匹配的权重（兼容性加载）
+        old_dict = torch.load(weight_path)
+        model_dict = model.state_dict()
+        old_dict = {k: v for k, v in old_dict.items() if (k in model_dict)}
+        model_dict.update(old_dict)
+        model.load_state_dict(model_dict)
+    return model</pre>
 
 <p>这种”过滤式加载”（<code>&#123;k: v for k, v in old_dict.items() if (k in model_dict)&#125;</code>）是一种常见的<strong>模型权重迁移技巧</strong>：只加载形状匹配的参数，忽略分类头等不匹配的参数。这是因为 ResT 的预训练权重是在 ImageNet 分类任务上训练的，包含分类头参数，但分割模型不需要这些参数。</p>
 <hr>
 <h2 id="5-第四层借鉴：Swin-Unet-Swin-UMamba-的解码器范式"><a href="#5-第四层借鉴：Swin-Unet-Swin-UMamba-的解码器范式" class="headerlink" title="5. 第四层借鉴：Swin-Unet &#x2F; Swin-UMamba 的解码器范式"></a>5. 第四层借鉴：Swin-Unet &#x2F; Swin-UMamba 的解码器范式</h2><h3 id="5-1-PatchExpand-的代码传承链"><a href="#5-1-PatchExpand-的代码传承链" class="headerlink" title="5.1 PatchExpand 的代码传承链"></a>5.1 PatchExpand 的代码传承链</h3><p>UNetMamba 解码器中最核心的两个上采样模块，其来源可以被精确追溯：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Swin-Unet（arXiv:2105.05537）</span><br><span class="line">  ↓ 引用实现</span><br><span class="line">Swin-UMamba/swin_umamba/nnunetv2/nets/SwinUMambaD.py</span><br><span class="line">  ↓ 移植到遥感场景</span><br><span class="line">UNetMamba/unetmamba_model/models/UNetMamba.py</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">Swin-Unet（arXiv:2105.05537）
+  ↓ 引用实现
+Swin-UMamba/swin_umamba/nnunetv2/nets/SwinUMambaD.py
+  ↓ 移植到遥感场景
+UNetMamba/unetmamba_model/models/UNetMamba.py</pre>
 
 <p>代码中的注释直接给出了出处：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PatchExpand</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Reference: https://arxiv.org/pdf/2105.05537.pdf    ← Swin-Unet 论文</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)   <span class="comment"># B, C, H, W ==&gt; B, H, W, C</span></span><br><span class="line">        x = <span class="variable language_">self</span>.expand(x)            <span class="comment"># 通道数 ×2（为了后续像素 shuffle）</span></span><br><span class="line">        B, H, W, C = x.shape</span><br><span class="line">        <span class="comment"># 2×2 像素 shuffle：将通道拆分为 2x2 空间像素</span></span><br><span class="line">        x = rearrange(x, <span class="string">&#x27;b h w (p1 p2 c)-&gt; b (h p1) (w p2) c&#x27;</span>, p1=<span class="number">2</span>, p2=<span class="number">2</span>, c=C//<span class="number">4</span>)</span><br><span class="line">        x = <span class="variable language_">self</span>.norm(x)</span><br><span class="line">        x = x.reshape(B, H*<span class="number">2</span>, W*<span class="number">2</span>, C//<span class="number">4</span>)  <span class="comment"># 分辨率 ×2，通道 ÷2</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FinalPatchExpand_X4</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Reference:</span></span><br><span class="line"><span class="string">        - GitHub: https://github.com/HuCaoFighting/Swin-Unet/blob/...   ← Swin-Unet GitHub</span></span><br><span class="line"><span class="string">        - Paper: https://arxiv.org/pdf/2105.05537.pdf</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 最终 4×上采样：将 H/4 × W/4 恢复到 H × W</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">class PatchExpand(nn.Module):
+    """
+    Reference: https://arxiv.org/pdf/2105.05537.pdf    ← Swin-Unet 论文
+    """
+    def forward(self, x):
+        x = x.permute(0, 2, 3, 1)   # B, C, H, W ==&gt; B, H, W, C
+        x = self.expand(x)            # 通道数 ×2（为了后续像素 shuffle）
+        B, H, W, C = x.shape
+        # 2×2 像素 shuffle：将通道拆分为 2x2 空间像素
+        x = rearrange(x, 'b h w (p1 p2 c)-&gt; b (h p1) (w p2) c', p1=2, p2=2, c=C//4)
+        x = self.norm(x)
+        x = x.reshape(B, H*2, W*2, C//4)  # 分辨率 ×2，通道 ÷2
+        return x
+
+class FinalPatchExpand_X4(nn.Module):
+    """
+    Reference:
+        - GitHub: https://github.com/HuCaoFighting/Swin-Unet/blob/...   ← Swin-Unet GitHub
+        - Paper: https://arxiv.org/pdf/2105.05537.pdf
+    """
+    # 最终 4×上采样：将 H/4 × W/4 恢复到 H × W</pre>
 
 <p>与 Swin-UMamba 中对应代码的比对显示：这两个类在 UNetMamba 中几乎<strong>原样使用</strong>，唯一的改动是删除了 Swin-UMamba 特有的 <code>input_resolution</code> 形状校验逻辑（因为 UNetMamba 固定使用 1024×1024 输入）。</p>
 <h3 id="5-2-VSSLayer-的结构参考"><a href="#5-2-VSSLayer-的结构参考" class="headerlink" title="5.2 VSSLayer 的结构参考"></a>5.2 VSSLayer 的结构参考</h3><p><code>VSSLayer</code> 是 UNetMamba 中将 VSS Block 组织为层的类，其整体结构参考了 Swin-UMamba 的 <code>SwinUMambaD.py</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Swin-UMamba 的 MambaDecoder 结构（参考）</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n_stages_encoder):</span><br><span class="line">    expand_layers.append(PatchExpand(...))    <span class="comment"># 上采样层</span></span><br><span class="line">    stages.append(VSSLayer(...))              <span class="comment"># VSS Block 堆叠</span></span><br><span class="line">    concat_back_dim.append(nn.Linear(...))   <span class="comment"># Skip connection 维度对齐</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba 的 MambaSegDecoder（直接借鉴这一组织结构）</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n_stages_encoder):</span><br><span class="line">    expand_layers.append(PatchExpand(...))    <span class="comment"># ← 相同的 PatchExpand</span></span><br><span class="line">    stages.append(VSSLayer(...))              <span class="comment"># ← 相同的组织方式</span></span><br><span class="line">    concat_back_dim.append(nn.Linear(...))   <span class="comment"># ← 相同的 skip 融合方式</span></span><br><span class="line">    lsm_layers.append(LocalSupervision(...)) <span class="comment"># ← UNetMamba 新增的 LSM 层</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># Swin-UMamba 的 MambaDecoder 结构（参考）
+for s in range(1, n_stages_encoder):
+    expand_layers.append(PatchExpand(...))    # 上采样层
+    stages.append(VSSLayer(...))              # VSS Block 堆叠
+    concat_back_dim.append(nn.Linear(...))   # Skip connection 维度对齐
+
+# UNetMamba 的 MambaSegDecoder（直接借鉴这一组织结构）
+for s in range(1, n_stages_encoder):
+    expand_layers.append(PatchExpand(...))    # ← 相同的 PatchExpand
+    stages.append(VSSLayer(...))              # ← 相同的组织方式
+    concat_back_dim.append(nn.Linear(...))   # ← 相同的 skip 融合方式
+    lsm_layers.append(LocalSupervision(...)) # ← UNetMamba 新增的 LSM 层</pre>
 
 <hr>
 <h2 id="6-核心新增：MSD-解码器与-LSM-模块的自主实现"><a href="#6-核心新增：MSD-解码器与-LSM-模块的自主实现" class="headerlink" title="6. 核心新增：MSD 解码器与 LSM 模块的自主实现"></a>6. 核心新增：MSD 解码器与 LSM 模块的自主实现</h2><p>前四层都是继承和借鉴，这一层才是 UNetMamba 作者真正的<strong>原创贡献</strong>。</p>
-<h3 id="6-1-LocalSupervision（LSM-Block）：全新设计"><a href="#6-1-LocalSupervision（LSM-Block）：全新设计" class="headerlink" title="6.1 LocalSupervision（LSM Block）：全新设计"></a>6.1 LocalSupervision（LSM Block）：全新设计</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LocalSupervision</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    局部监督模块（LSM Block）——UNetMamba 的核心创新之一</span></span><br><span class="line"><span class="string">    特点：仅在训练时存在，推理时消失（train-only）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels=<span class="number">128</span>, num_classes=<span class="number">6</span></span>):</span><br><span class="line">        <span class="comment"># 两个并行卷积分支</span></span><br><span class="line">        <span class="variable language_">self</span>.conv3 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels, in_channels, kernel_size=<span class="number">3</span>, ...),</span><br><span class="line">            nn.BatchNorm2d(in_channels),</span><br><span class="line">            nn.ReLU6()               <span class="comment"># ← ReLU6 防止激活值爆炸</span></span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels, in_channels, kernel_size=<span class="number">1</span>, ...),</span><br><span class="line">            nn.BatchNorm2d(in_channels),</span><br><span class="line">            nn.ReLU6()</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.drop = nn.Dropout(<span class="number">0.1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.conv_out = nn.Conv2d(in_channels, num_classes, kernel_size=<span class="number">1</span>, ...)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, h, w</span>):</span><br><span class="line">        local1 = <span class="variable language_">self</span>.conv3(x)    <span class="comment"># 3×3 卷积捕获局部上下文</span></span><br><span class="line">        local2 = <span class="variable language_">self</span>.conv1(x)    <span class="comment"># 1×1 卷积做点级映射</span></span><br><span class="line">        x = <span class="variable language_">self</span>.drop(local1 + local2)    <span class="comment"># 两路相加 + Dropout</span></span><br><span class="line">        x = <span class="variable language_">self</span>.conv_out(x)              <span class="comment"># 映射到分类空间</span></span><br><span class="line">        x = F.interpolate(x, size=(h, w), ...)  <span class="comment"># 上采样到原始尺寸</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h3 id="6-1-LocalSupervision（LSM-Block）：全新设计"><a href="#6-1-LocalSupervision（LSM-Block）：全新设计" class="headerlink" title="6.1 LocalSupervision（LSM Block）：全新设计"></a>6.1 LocalSupervision（LSM Block）：全新设计</h3><pre class="doc-code-block">class LocalSupervision(nn.Module):
+    """
+    局部监督模块（LSM Block）——UNetMamba 的核心创新之一
+    特点：仅在训练时存在，推理时消失（train-only）
+    """
+    def __init__(self, in_channels=128, num_classes=6):
+        # 两个并行卷积分支
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(in_channels, in_channels, kernel_size=3, ...),
+            nn.BatchNorm2d(in_channels),
+            nn.ReLU6()               # ← ReLU6 防止激活值爆炸
+        )
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(in_channels, in_channels, kernel_size=1, ...),
+            nn.BatchNorm2d(in_channels),
+            nn.ReLU6()
+        )
+        self.drop = nn.Dropout(0.1)
+        self.conv_out = nn.Conv2d(in_channels, num_classes, kernel_size=1, ...)
+
+    def forward(self, x, h, w):
+        local1 = self.conv3(x)    # 3×3 卷积捕获局部上下文
+        local2 = self.conv1(x)    # 1×1 卷积做点级映射
+        x = self.drop(local1 + local2)    # 两路相加 + Dropout
+        x = self.conv_out(x)              # 映射到分类空间
+        x = F.interpolate(x, size=(h, w), ...)  # 上采样到原始尺寸
+        return x</pre>
 
 <p><strong>设计要点</strong>：</p>
 <ul>
@@ -193,10 +408,69 @@
 <li>返回的是插值到原始 (h, w) 的分割预测——直接用于计算辅助损失</li>
 </ul>
 <h3 id="6-2-MambaSegDecoder（MSD）：在继承基础上的关键整合"><a href="#6-2-MambaSegDecoder（MSD）：在继承基础上的关键整合" class="headerlink" title="6.2 MambaSegDecoder（MSD）：在继承基础上的关键整合"></a>6.2 MambaSegDecoder（MSD）：在继承基础上的关键整合</h3><p><code>MambaSegDecoder</code> 是 UNetMamba 的核心，它把借来的组件（PatchExpand from Swin-Unet、VSSLayer from VMamba、skip connection from U-Net）整合成了一个统一的解码器：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MambaSegDecoder</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_classes, encoder_channels, ...</span>):</span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n_stages_encoder):</span><br><span class="line">            <span class="comment"># 1. 上采样层（来自 Swin-Unet）</span></span><br><span class="line">            expand_layers.append(PatchExpand(...))</span><br><span class="line">            <span class="comment"># 2. VSS Block 层（来自 VMamba）</span></span><br><span class="line">            stages.append(VSSLayer(dim=input_features_skip, depth=<span class="number">2</span>, ...))</span><br><span class="line">            <span class="comment"># 3. Skip Connection 维度对齐（U-Net 范式）</span></span><br><span class="line">            concat_back_dim.append(nn.Linear(<span class="number">2</span> * input_features_skip, input_features_skip))</span><br><span class="line">            <span class="comment"># 4. ★ 新增：LSM 局部监督层（UNetMamba 原创）</span></span><br><span class="line">            lsm_layers.append(LocalSupervision(encoder_channels[-(s+<span class="number">1</span>)], num_classes))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 5. 最终 4× 上采样（来自 Swin-Unet）</span></span><br><span class="line">        expand_layers.append(FinalPatchExpand_X4(...))</span><br><span class="line">        <span class="comment"># 6. 分割输出头（标准 1×1 Conv）</span></span><br><span class="line">        <span class="variable language_">self</span>.seg = nn.Conv2d(encoder_channels[-<span class="number">4</span>], num_classes, kernel_size=<span class="number">1</span>, ...)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, skips, h, w</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">            ls = []</span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(<span class="variable language_">self</span>.stages)):</span><br><span class="line">                x = <span class="variable language_">self</span>.expand_layers[s](lres_input)      <span class="comment"># 上采样</span></span><br><span class="line">                <span class="keyword">if</span> s &lt; (<span class="built_in">len</span>(<span class="variable language_">self</span>.stages) - <span class="number">1</span>):</span><br><span class="line">                    x = torch.cat((x, skips[-(s+<span class="number">2</span>)].permute(...)), -<span class="number">1</span>)  <span class="comment"># concat skip</span></span><br><span class="line">                    x = <span class="variable language_">self</span>.concat_back_dim[s](x)         <span class="comment"># 维度对齐</span></span><br><span class="line">                x = <span class="variable language_">self</span>.stages[s](x).permute(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)  <span class="comment"># VSS Block 处理</span></span><br><span class="line">                <span class="keyword">if</span> s == (<span class="built_in">len</span>(<span class="variable language_">self</span>.stages) - <span class="number">1</span>):</span><br><span class="line">                    seg_out = <span class="variable language_">self</span>.seg(x)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    ls.append(<span class="variable language_">self</span>.lsm[s](x, h, w))  <span class="comment"># ★ 收集 LSM 的局部监督结果</span></span><br><span class="line">                lres_input = x</span><br><span class="line">            <span class="keyword">return</span> seg_out, <span class="built_in">sum</span>(ls)  <span class="comment"># ★ 主分割结果 + 所有 LSM 之和（辅助损失用）</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 推理时：完全相同的前向流程，但跳过 LSM</span></span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(<span class="variable language_">self</span>.stages)):</span><br><span class="line">                ...（无 LSM）</span><br><span class="line">            <span class="keyword">return</span> seg_out  <span class="comment"># 只返回主分割结果</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">class MambaSegDecoder(nn.Module):
+    def __init__(self, num_classes, encoder_channels, ...):
+        for s in range(1, n_stages_encoder):
+            # 1. 上采样层（来自 Swin-Unet）
+            expand_layers.append(PatchExpand(...))
+            # 2. VSS Block 层（来自 VMamba）
+            stages.append(VSSLayer(dim=input_features_skip, depth=2, ...))
+            # 3. Skip Connection 维度对齐（U-Net 范式）
+            concat_back_dim.append(nn.Linear(2 * input_features_skip, input_features_skip))
+            # 4. ★ 新增：LSM 局部监督层（UNetMamba 原创）
+            lsm_layers.append(LocalSupervision(encoder_channels[-(s+1)], num_classes))
+
+        # 5. 最终 4× 上采样（来自 Swin-Unet）
+        expand_layers.append(FinalPatchExpand_X4(...))
+        # 6. 分割输出头（标准 1×1 Conv）
+        self.seg = nn.Conv2d(encoder_channels[-4], num_classes, kernel_size=1, ...)
+
+    def forward(self, skips, h, w):
+        if self.training:
+            ls = []
+            for s in range(len(self.stages)):
+                x = self.expand_layers[s](lres_input)      # 上采样
+                if s &lt; (len(self.stages) - 1):
+                    x = torch.cat((x, skips[-(s+2)].permute(...)), -1)  # concat skip
+                    x = self.concat_back_dim[s](x)         # 维度对齐
+                x = self.stages[s](x).permute(0, 3, 1, 2)  # VSS Block 处理
+                if s == (len(self.stages) - 1):
+                    seg_out = self.seg(x)
+                else:
+                    ls.append(self.lsm[s](x, h, w))  # ★ 收集 LSM 的局部监督结果
+                lres_input = x
+            return seg_out, sum(ls)  # ★ 主分割结果 + 所有 LSM 之和（辅助损失用）
+
+        else:  # 推理时：完全相同的前向流程，但跳过 LSM
+            for s in range(len(self.stages)):
+                ...（无 LSM）
+            return seg_out  # 只返回主分割结果</pre>
 
 <p><strong>训练&#x2F;推理分支的对称设计</strong>是这个模块最精妙的地方：<code>training</code> 标志由 PyTorch 的 <code>model.train()</code> &#x2F; <code>model.eval()</code> 控制，无需修改推理脚本。</p>
-<h3 id="6-3-UNetMamba-主类：极简的整合"><a href="#6-3-UNetMamba-主类：极简的整合" class="headerlink" title="6.3 UNetMamba 主类：极简的整合"></a>6.3 UNetMamba 主类：极简的整合</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UNetMamba</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, pretrained, backbone_path, num_classes=<span class="number">6</span>, **kwargs</span>):</span><br><span class="line">        <span class="comment"># 编码器：ResT-Lite（轻量 Transformer）</span></span><br><span class="line">        <span class="variable language_">self</span>.encoder = rest_lite(weight_path=backbone_path)</span><br><span class="line">        encoder_channels = [<span class="number">64</span>, <span class="number">128</span>, <span class="number">256</span>, <span class="number">512</span>]  <span class="comment"># ResT-Lite 固定通道配置</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 解码器：MambaSegDecoder（核心贡献）</span></span><br><span class="line">        <span class="variable language_">self</span>.decoder = MambaSegDecoder(</span><br><span class="line">            num_classes=num_classes,</span><br><span class="line">            encoder_channels=encoder_channels,</span><br><span class="line">            ...</span><br><span class="line">        )</span><br><span class="line">        <span class="comment"># 注意：**kwargs 吸收了 config 中传入的所有 VSSM 参数，但实际上并未使用</span></span><br><span class="line">        <span class="comment"># 这是早期开发遗留的痕迹（见第8节）</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        h, w = x.size()[-<span class="number">2</span>:]</span><br><span class="line">        outputs = <span class="variable language_">self</span>.encoder(x)   <span class="comment"># 编码器输出 4 个尺度的特征</span></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">            x, lsm = <span class="variable language_">self</span>.decoder(outputs, h, w)</span><br><span class="line">            <span class="keyword">return</span> x, lsm           <span class="comment"># 训练时返回主结果 + 辅助结果</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            x = <span class="variable language_">self</span>.decoder(outputs, h, w)</span><br><span class="line">            <span class="keyword">return</span> x                <span class="comment"># 推理时只返回主结果</span></span><br></pre></td></tr></table></figure>
+<h3 id="6-3-UNetMamba-主类：极简的整合"><a href="#6-3-UNetMamba-主类：极简的整合" class="headerlink" title="6.3 UNetMamba 主类：极简的整合"></a>6.3 UNetMamba 主类：极简的整合</h3><pre class="doc-code-block">class UNetMamba(nn.Module):
+    def __init__(self, pretrained, backbone_path, num_classes=6, **kwargs):
+        # 编码器：ResT-Lite（轻量 Transformer）
+        self.encoder = rest_lite(weight_path=backbone_path)
+        encoder_channels = [64, 128, 256, 512]  # ResT-Lite 固定通道配置
+
+        # 解码器：MambaSegDecoder（核心贡献）
+        self.decoder = MambaSegDecoder(
+            num_classes=num_classes,
+            encoder_channels=encoder_channels,
+            ...
+        )
+        # 注意：**kwargs 吸收了 config 中传入的所有 VSSM 参数，但实际上并未使用
+        # 这是早期开发遗留的痕迹（见第8节）
+
+    def forward(self, x):
+        h, w = x.size()[-2:]
+        outputs = self.encoder(x)   # 编码器输出 4 个尺度的特征
+        if self.training:
+            x, lsm = self.decoder(outputs, h, w)
+            return x, lsm           # 训练时返回主结果 + 辅助结果
+        else:
+            x = self.decoder(outputs, h, w)
+            return x                # 推理时只返回主结果</pre>
 
 <hr>
 <h2 id="7-全局改动：命名空间重构与细节调整"><a href="#7-全局改动：命名空间重构与细节调整" class="headerlink" title="7. 全局改动：命名空间重构与细节调整"></a>7. 全局改动：命名空间重构与细节调整</h2><h3 id="7-1-命名空间重构"><a href="#7-1-命名空间重构" class="headerlink" title="7.1 命名空间重构"></a>7.1 命名空间重构</h3><p>GeoSeg 的包名是 <code>geoseg</code>，UNetMamba 将其重命名为 <code>unetmamba_model</code>：</p>
@@ -229,7 +503,13 @@
 </tr>
 </tbody></table>
 <h3 id="7-2-外部依赖的替换"><a href="#7-2-外部依赖的替换" class="headerlink" title="7.2 外部依赖的替换"></a>7.2 外部依赖的替换</h3><p>GeoSeg 将 <code>Lookahead</code> 和 <code>process_model_params</code> 放在自己的 <code>tools/utils.py</code> 中（本地实现），UNetMamba 改为直接使用 <strong><code>catalyst</code></strong> 库的版本：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GeoSeg（自定义工具）</span></span><br><span class="line"><span class="keyword">from</span> tools.utils <span class="keyword">import</span> Lookahead, process_model_params</span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba（使用外部库）</span></span><br><span class="line"><span class="keyword">from</span> catalyst.contrib.nn <span class="keyword">import</span> Lookahead     <span class="comment"># catalyst 库</span></span><br><span class="line"><span class="keyword">from</span> catalyst <span class="keyword">import</span> utils</span><br><span class="line">utils.process_model_params(net, ...)          <span class="comment"># 功能等价，但依赖外部包</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># GeoSeg（自定义工具）
+from tools.utils import Lookahead, process_model_params
+
+# UNetMamba（使用外部库）
+from catalyst.contrib.nn import Lookahead     # catalyst 库
+from catalyst import utils
+utils.process_model_params(net, ...)          # 功能等价，但依赖外部包</pre>
 
 <p><strong>原因</strong>：UNetMamba 的 <code>requirements.txt</code> 中包含了 <code>catalyst</code> 库，这简化了工具函数的维护，但增加了一个依赖项。</p>
 <h3 id="7-3-测试脚本的细节调整"><a href="#7-3-测试脚本的细节调整" class="headerlink" title="7.3 测试脚本的细节调整"></a>7.3 测试脚本的细节调整</h3><table>
@@ -267,49 +547,129 @@
 </tr>
 </tbody></table>
 <h3 id="7-4-vaihingen-dataset-py-的适配"><a href="#7-4-vaihingen-dataset-py-的适配" class="headerlink" title="7.4 vaihingen_dataset.py 的适配"></a>7.4 vaihingen_dataset.py 的适配</h3><p>这是数据集文件中修改最多的一个：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GeoSeg 原版（固定 1024 尺寸）</span></span><br><span class="line">ORIGIN_IMG_SIZE = (<span class="number">1024</span>, <span class="number">1024</span>)</span><br><span class="line">INPUT_IMG_SIZE = (<span class="number">1024</span>, <span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># UNetMamba（参数化尺寸，支持多分辨率实验）</span></span><br><span class="line">IMG_SIZE = <span class="number">1024</span></span><br><span class="line">ORIGIN_IMG_SIZE = (IMG_SIZE, IMG_SIZE)</span><br><span class="line">CROP_SIZE = <span class="built_in">int</span>(<span class="number">512</span> * (<span class="built_in">float</span>(IMG_SIZE / <span class="number">1024</span>)))  <span class="comment"># ← 裁剪尺寸随输入尺寸等比缩放</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试集路径也参数化</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, data_root=<span class="string">&#x27;data/vaihingen/test_&#x27;</span>+<span class="built_in">str</span>(<span class="params">IMG_SIZE</span>), ...</span>):</span><br><span class="line">    <span class="comment"># 原版：&#x27;data/vaihingen/test&#x27;（固定路径）</span></span><br><span class="line">    <span class="comment"># 新版：根据 IMG_SIZE 自动选择对应尺寸的数据集</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># GeoSeg 原版（固定 1024 尺寸）
+ORIGIN_IMG_SIZE = (1024, 1024)
+INPUT_IMG_SIZE = (1024, 1024)
+
+# UNetMamba（参数化尺寸，支持多分辨率实验）
+IMG_SIZE = 1024
+ORIGIN_IMG_SIZE = (IMG_SIZE, IMG_SIZE)
+CROP_SIZE = int(512 * (float(IMG_SIZE / 1024)))  # ← 裁剪尺寸随输入尺寸等比缩放
+
+# 测试集路径也参数化
+def __init__(self, data_root='data/vaihingen/test_'+str(IMG_SIZE), ...):
+    # 原版：'data/vaihingen/test'（固定路径）
+    # 新版：根据 IMG_SIZE 自动选择对应尺寸的数据集</pre>
 
 <p>这个改动说明作者在实验过程中尝试了不同分辨率的输入（如 512、768、1024），<code>IMG_SIZE</code> 变量使得切换尺寸只需改一个数字。</p>
 <hr>
 <h2 id="8-Config-的演化痕迹：从-VMamba-backbone-到-ResT-Lite"><a href="#8-Config-的演化痕迹：从-VMamba-backbone-到-ResT-Lite" class="headerlink" title="8. Config 的演化痕迹：从 VMamba backbone 到 ResT-Lite"></a>8. Config 的演化痕迹：从 VMamba backbone 到 ResT-Lite</h2><p>Config 文件是代码演化历史中最有意思的部分——它保留了早期设计方案的残留痕迹。</p>
 <h3 id="8-1-Config-中的”幽灵参数”"><a href="#8-1-Config-中的”幽灵参数”" class="headerlink" title="8.1 Config 中的”幽灵参数”"></a>8.1 Config 中的”幽灵参数”</h3><p>当前 UNetMamba 的 config 文件传入了大量 VMamba 专属参数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># UNetMamba/config/loveda/unetmamba.py（当前版本）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># VSSM parameters（这些参数名都是 VMamba backbone 的配置）</span></span><br><span class="line">PATCH_SIZE = <span class="number">4</span></span><br><span class="line">DEPTHS = [<span class="number">2</span>, <span class="number">2</span>, <span class="number">9</span>, <span class="number">2</span>]       <span class="comment"># VMamba-Tiny 的深度配置</span></span><br><span class="line">EMBED_DIM = <span class="number">96</span>               <span class="comment"># VMamba 的嵌入维度</span></span><br><span class="line">SSM_D_STATE = <span class="number">16</span>             <span class="comment"># SSM 状态维度</span></span><br><span class="line">SSM_RATIO = <span class="number">2.0</span>              <span class="comment"># SSM 扩展比</span></span><br><span class="line">SSM_FORWARDTYPE = <span class="string">&quot;v4&quot;</span>       <span class="comment"># VMamba 的特定前向传播版本</span></span><br><span class="line">...（共 <span class="number">14</span> 个 VSSM 参数）</span><br><span class="line"></span><br><span class="line">net = UNetMamba(</span><br><span class="line">    pretrained=...,</span><br><span class="line">    num_classes=num_classes,</span><br><span class="line">    patch_size=PATCH_SIZE,    <span class="comment"># ← 这些参数全部传入</span></span><br><span class="line">    in_chans=IN_CHANS,</span><br><span class="line">    depths=DEPTHS,</span><br><span class="line">    dims=EMBED_DIM,</span><br><span class="line">    ssm_d_state=SSM_D_STATE,</span><br><span class="line">    ...</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block"># UNetMamba/config/loveda/unetmamba.py（当前版本）
+
+# VSSM parameters（这些参数名都是 VMamba backbone 的配置）
+PATCH_SIZE = 4
+DEPTHS = [2, 2, 9, 2]       # VMamba-Tiny 的深度配置
+EMBED_DIM = 96               # VMamba 的嵌入维度
+SSM_D_STATE = 16             # SSM 状态维度
+SSM_RATIO = 2.0              # SSM 扩展比
+SSM_FORWARDTYPE = "v4"       # VMamba 的特定前向传播版本
+...（共 14 个 VSSM 参数）
+
+net = UNetMamba(
+    pretrained=...,
+    num_classes=num_classes,
+    patch_size=PATCH_SIZE,    # ← 这些参数全部传入
+    in_chans=IN_CHANS,
+    depths=DEPTHS,
+    dims=EMBED_DIM,
+    ssm_d_state=SSM_D_STATE,
+    ...
+)</pre>
 
 <p>但实际的 <code>UNetMamba.__init__</code> 是这样的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UNetMamba</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 pretrained,</span></span><br><span class="line"><span class="params">                 decode_channels=<span class="number">64</span>,</span></span><br><span class="line"><span class="params">                 backbone_path=<span class="string">&#x27;pretrain_weights/rest_lite.pth&#x27;</span>,</span></span><br><span class="line"><span class="params">                 embed_dim=<span class="number">64</span>,</span></span><br><span class="line"><span class="params">                 num_classes=<span class="number">6</span>,</span></span><br><span class="line"><span class="params">                 **kwargs    <span class="comment"># ← config 传入的所有 VSSM 参数都被 **kwargs 吸收并丢弃</span></span></span><br><span class="line"><span class="params">                 </span>):</span><br><span class="line">        <span class="variable language_">self</span>.encoder = rest_lite(weight_path=backbone_path)  <span class="comment"># ← 实际只用 ResT-Lite</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">class UNetMamba(nn.Module):
+    def __init__(self,
+                 pretrained,
+                 decode_channels=64,
+                 backbone_path='pretrain_weights/rest_lite.pth',
+                 embed_dim=64,
+                 num_classes=6,
+                 **kwargs    # ← config 传入的所有 VSSM 参数都被 **kwargs 吸收并丢弃
+                 ):
+        self.encoder = rest_lite(weight_path=backbone_path)  # ← 实际只用 ResT-Lite</pre>
 
 <p><strong>这意味着什么？</strong></p>
 <p>这是典型的<strong>重构遗留痕迹</strong>：作者在早期版本中尝试过将 VMamba（VSSM）用作 backbone 编码器，因此 config 中保留了完整的 VSSM 参数配置。当编码器切换为 ResT-Lite 之后，模型代码改了，但 config 文件中的 VSSM 参数并没有清理——它们被 <code>**kwargs</code> 静默忽略。</p>
 <h3 id="8-2-推测的代码演化路径"><a href="#8-2-推测的代码演化路径" class="headerlink" title="8.2 推测的代码演化路径"></a>8.2 推测的代码演化路径</h3><p>基于 config 文件的遗留参数，可以推测 UNetMamba 的开发经历了至少两个阶段：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">【阶段一：VMamba-Encoder 版本（推测）】</span><br><span class="line">  编码器：VSSM（VMamba backbone，~30M 参数）</span><br><span class="line">  解码器：MSD（VSS Block 解码器）</span><br><span class="line">  Config 中的 VSSM 参数：有意义、被使用</span><br><span class="line">  问题：参数量过大（&gt;30M），与&quot;高效&quot;目标矛盾</span><br><span class="line"></span><br><span class="line">      ↓ 编码器换成 ResT-Lite</span><br><span class="line"></span><br><span class="line">【阶段二：ResT-Lite Encoder 版本（当前版本）】</span><br><span class="line">  编码器：ResT-Lite（~13M 参数）</span><br><span class="line">  解码器：MSD + LSM</span><br><span class="line">  Config 中的 VSSM 参数：已无意义，被 **kwargs 吸收</span><br><span class="line">  参数量：14.76M，效率大幅提升</span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">【阶段一：VMamba-Encoder 版本（推测）】
+  编码器：VSSM（VMamba backbone，~30M 参数）
+  解码器：MSD（VSS Block 解码器）
+  Config 中的 VSSM 参数：有意义、被使用
+  问题：参数量过大（&gt;30M），与"高效"目标矛盾
+
+      ↓ 编码器换成 ResT-Lite
+
+【阶段二：ResT-Lite Encoder 版本（当前版本）】
+  编码器：ResT-Lite（~13M 参数）
+  解码器：MSD + LSM
+  Config 中的 VSSM 参数：已无意义，被 **kwargs 吸收
+  参数量：14.76M，效率大幅提升</pre>
 
 <p>这个推测与论文中的叙述一致：</p>
 <blockquote>
 <p><em>“models that utilize a pre-trained VMamba backbone (&gt;30M) while encoding tend to be overweight for our goal of high efficiency. Therefore, we incorporate the basic unit of VMamba, namely, VSS block, into the <strong>decoding side only</strong>.”</em></p>
 </blockquote>
 <h3 id="8-3-CMUNet-py-中的更早期痕迹"><a href="#8-3-CMUNet-py-中的更早期痕迹" class="headerlink" title="8.3 CMUNet.py 中的更早期痕迹"></a>8.3 CMUNet.py 中的更早期痕迹</h3><p><code>CMUNet.py</code> 中也有类似的早期探索痕迹：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .mamba_sys <span class="keyword">import</span> VSSM</span><br><span class="line"><span class="comment"># from .mamba_sys_swin import VSSM_SWIN       ← 注释掉的 Swin 版 VSSM</span></span><br><span class="line"><span class="comment"># from .mamba_sys_vmamba import VSSMMamba      ← 注释掉的 VMamba 版</span></span><br><span class="line"><span class="comment"># from .mamba_sys_res import VSSMRes           ← 注释掉的 ResNet 版</span></span><br></pre></td></tr></table></figure>
+<pre class="doc-code-block">from .mamba_sys import VSSM
+# from .mamba_sys_swin import VSSM_SWIN       ← 注释掉的 Swin 版 VSSM
+# from .mamba_sys_vmamba import VSSMMamba      ← 注释掉的 VMamba 版
+# from .mamba_sys_res import VSSMRes           ← 注释掉的 ResNet 版</pre>
 
 <p>这些注释掉的 import 表明，在最终版本之前，作者探索过多种 VSSM 变体作为骨干网络的可能性。</p>
 <hr>
 <h2 id="9-代码演化时间线总结"><a href="#9-代码演化时间线总结" class="headerlink" title="9. 代码演化时间线总结"></a>9. 代码演化时间线总结</h2><p>综合以上分析，UNetMamba 代码库的构建过程可以还原为以下步骤：</p>
-<h3 id="Step-1：复制-GeoSeg-作为基础框架"><a href="#Step-1：复制-GeoSeg-作为基础框架" class="headerlink" title="Step 1：复制 GeoSeg 作为基础框架"></a>Step 1：复制 GeoSeg 作为基础框架</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GeoSeg/</span><br><span class="line">├── train_supervision.py  →  UNetMamba/train.py</span><br><span class="line">├── loveda_test.py        →  UNetMamba/loveda_test.py</span><br><span class="line">├── vaihingen_test.py     →  UNetMamba/vaihingen_test.py</span><br><span class="line">├── geoseg/               →  UNetMamba/unetmamba_model/</span><br><span class="line">│   ├── models/（BANet, DCSwin, MANet, ABCNet, UNetFormer）→ 完整复制</span><br><span class="line">│   ├── datasets/         →  完整复制</span><br><span class="line">│   └── losses/           →  完整复制</span><br><span class="line">└── tools/                →  完整复制</span><br></pre></td></tr></table></figure>
+<h3 id="Step-1：复制-GeoSeg-作为基础框架"><a href="#Step-1：复制-GeoSeg-作为基础框架" class="headerlink" title="Step 1：复制 GeoSeg 作为基础框架"></a>Step 1：复制 GeoSeg 作为基础框架</h3><pre class="doc-code-block">GeoSeg/
+├── train_supervision.py  →  UNetMamba/train.py
+├── loveda_test.py        →  UNetMamba/loveda_test.py
+├── vaihingen_test.py     →  UNetMamba/vaihingen_test.py
+├── geoseg/               →  UNetMamba/unetmamba_model/
+│   ├── models/（BANet, DCSwin, MANet, ABCNet, UNetFormer）→ 完整复制
+│   ├── datasets/         →  完整复制
+│   └── losses/           →  完整复制
+└── tools/                →  完整复制</pre>
 
 <p>此时 UNetMamba 就是一个改名的 GeoSeg，能跑通 BANet 和 UNetFormer 的训练。</p>
-<h3 id="Step-2：集成-VMamba-的-SSM-算子"><a href="#Step-2：集成-VMamba-的-SSM-算子" class="headerlink" title="Step 2：集成 VMamba 的 SSM 算子"></a>Step 2：集成 VMamba 的 SSM 算子</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VMamba/vmamba.py              →  UNetMamba/unetmamba_model/mamba_sys.py（原样复制）</span><br><span class="line">VMamba/classification/vmamba.py  →  UNetMamba/.../classification/models/vmamba.py</span><br><span class="line">                                     （新增 CrossScan 纯 PyTorch 回退实现）</span><br></pre></td></tr></table></figure>
+<h3 id="Step-2：集成-VMamba-的-SSM-算子"><a href="#Step-2：集成-VMamba-的-SSM-算子" class="headerlink" title="Step 2：集成 VMamba 的 SSM 算子"></a>Step 2：集成 VMamba 的 SSM 算子</h3><pre class="doc-code-block">VMamba/vmamba.py              →  UNetMamba/unetmamba_model/mamba_sys.py（原样复制）
+VMamba/classification/vmamba.py  →  UNetMamba/.../classification/models/vmamba.py
+                                     （新增 CrossScan 纯 PyTorch 回退实现）</pre>
 
 <p>此时 UNetMamba 可以在代码中调用 <code>VSSBlock</code> 和 <code>SS2D</code>。</p>
-<h3 id="Step-3：移植-ResT-编码器"><a href="#Step-3：移植-ResT-编码器" class="headerlink" title="Step 3：移植 ResT 编码器"></a>Step 3：移植 ResT 编码器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ResT/models/rest.py  →  UNetMamba/unetmamba_model/models/ResT.py</span><br><span class="line">                         （删分类头，改返回值为多尺度特征 x1,x2,x3,x4）</span><br></pre></td></tr></table></figure>
+<h3 id="Step-3：移植-ResT-编码器"><a href="#Step-3：移植-ResT-编码器" class="headerlink" title="Step 3：移植 ResT 编码器"></a>Step 3：移植 ResT 编码器</h3><pre class="doc-code-block">ResT/models/rest.py  →  UNetMamba/unetmamba_model/models/ResT.py
+                         （删分类头，改返回值为多尺度特征 x1,x2,x3,x4）</pre>
 
-<h3 id="Step-4：集成-Swin-UMamba-的解码器上采样模块"><a href="#Step-4：集成-Swin-UMamba-的解码器上采样模块" class="headerlink" title="Step 4：集成 Swin-UMamba 的解码器上采样模块"></a>Step 4：集成 Swin-UMamba 的解码器上采样模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Swin-UMamba/SwinUMambaD.py 中的 PatchExpand / FinalPatchExpand_X4</span><br><span class="line">                         →  UNetMamba.py 中直接使用（保留 Swin-Unet 引用注释）</span><br></pre></td></tr></table></figure>
+<h3 id="Step-4：集成-Swin-UMamba-的解码器上采样模块"><a href="#Step-4：集成-Swin-UMamba-的解码器上采样模块" class="headerlink" title="Step 4：集成 Swin-UMamba 的解码器上采样模块"></a>Step 4：集成 Swin-UMamba 的解码器上采样模块</h3><pre class="doc-code-block">Swin-UMamba/SwinUMambaD.py 中的 PatchExpand / FinalPatchExpand_X4
+                         →  UNetMamba.py 中直接使用（保留 Swin-Unet 引用注释）</pre>
 
-<h3 id="Step-5：集成对比实验所需的其他-Mamba-模型"><a href="#Step-5：集成对比实验所需的其他-Mamba-模型" class="headerlink" title="Step 5：集成对比实验所需的其他 Mamba 模型"></a>Step 5：集成对比实验所需的其他 Mamba 模型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RS3Mamba 代码          →  UNetMamba/models/RS3Mamba.py（使用 VSSMEncoder + 解码器）</span><br><span class="line">Swin-UMamba 结构       →  UNetMamba/models/SwinUMamba.py</span><br><span class="line">CM-UNet 风格           →  UNetMamba/models/CMUNet.py</span><br></pre></td></tr></table></figure>
+<h3 id="Step-5：集成对比实验所需的其他-Mamba-模型"><a href="#Step-5：集成对比实验所需的其他-Mamba-模型" class="headerlink" title="Step 5：集成对比实验所需的其他 Mamba 模型"></a>Step 5：集成对比实验所需的其他 Mamba 模型</h3><pre class="doc-code-block">RS3Mamba 代码          →  UNetMamba/models/RS3Mamba.py（使用 VSSMEncoder + 解码器）
+Swin-UMamba 结构       →  UNetMamba/models/SwinUMamba.py
+CM-UNet 风格           →  UNetMamba/models/CMUNet.py</pre>
 
-<h3 id="Step-6：实现-MSD-和-LSM（核心创新）"><a href="#Step-6：实现-MSD-和-LSM（核心创新）" class="headerlink" title="Step 6：实现 MSD 和 LSM（核心创新）"></a>Step 6：实现 MSD 和 LSM（核心创新）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 UNetMamba.py 中自主实现：</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LocalSupervision</span>(...)  <span class="comment"># 全新设计：双卷积并行 + Dropout</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MambaSegDecoder</span>(...)   <span class="comment"># 整合 PatchExpand + VSSLayer + LSM</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UNetMamba</span>(...)         <span class="comment"># 顶层整合：ResT-Lite 编码器 + MSD 解码器</span></span><br></pre></td></tr></table></figure>
+<h3 id="Step-6：实现-MSD-和-LSM（核心创新）"><a href="#Step-6：实现-MSD-和-LSM（核心创新）" class="headerlink" title="Step 6：实现 MSD 和 LSM（核心创新）"></a>Step 6：实现 MSD 和 LSM（核心创新）</h3><pre class="doc-code-block"># 在 UNetMamba.py 中自主实现：
+class LocalSupervision(...)  # 全新设计：双卷积并行 + Dropout
+class MambaSegDecoder(...)   # 整合 PatchExpand + VSSLayer + LSM
+class UNetMamba(...)         # 顶层整合：ResT-Lite 编码器 + MSD 解码器</pre>
 
-<h3 id="Step-7：调整配置文件"><a href="#Step-7：调整配置文件" class="headerlink" title="Step 7：调整配置文件"></a>Step 7：调整配置文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GeoSeg/config/loveda/unetformer.py  →  UNetMamba/config/loveda/unetmamba.py</span><br><span class="line">  - 替换模型类名（UNetFormer → UNetMamba）</span><br><span class="line">  - 替换损失函数（UnetFormerLoss → UnetMambaLoss）</span><br><span class="line">  - 调整训练超参（epochs 30→100, batch_size 16→8, weight_decay 0.01→2.5e-4）</span><br><span class="line">  - 新增 FLOPs/Params 统计代码（fvcore 库）</span><br><span class="line">  - 遗留 VSSM 参数（早期 VMamba backbone 方案的痕迹）</span><br></pre></td></tr></table></figure>
+<h3 id="Step-7：调整配置文件"><a href="#Step-7：调整配置文件" class="headerlink" title="Step 7：调整配置文件"></a>Step 7：调整配置文件</h3><pre class="doc-code-block">GeoSeg/config/loveda/unetformer.py  →  UNetMamba/config/loveda/unetmamba.py
+  - 替换模型类名（UNetFormer → UNetMamba）
+  - 替换损失函数（UnetFormerLoss → UnetMambaLoss）
+  - 调整训练超参（epochs 30→100, batch_size 16→8, weight_decay 0.01→2.5e-4）
+  - 新增 FLOPs/Params 统计代码（fvcore 库）
+  - 遗留 VSSM 参数（早期 VMamba backbone 方案的痕迹）</pre>
 
-<h3 id="Step-8：修改损失函数类名和参数"><a href="#Step-8：修改损失函数类名和参数" class="headerlink" title="Step 8：修改损失函数类名和参数"></a>Step 8：修改损失函数类名和参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># useful_loss.py</span></span><br><span class="line">UnetFormerLoss  →  UnetMambaLoss        <span class="comment"># 类名</span></span><br><span class="line">ignore_index=<span class="number">255</span>  →  ignore_index=<span class="number">6</span>     <span class="comment"># 适配 LoveDA 7 类场景</span></span><br></pre></td></tr></table></figure>
+<h3 id="Step-8：修改损失函数类名和参数"><a href="#Step-8：修改损失函数类名和参数" class="headerlink" title="Step 8：修改损失函数类名和参数"></a>Step 8：修改损失函数类名和参数</h3><pre class="doc-code-block"># useful_loss.py
+UnetFormerLoss  →  UnetMambaLoss        # 类名
+ignore_index=255  →  ignore_index=6     # 适配 LoveDA 7 类场景</pre>
 
 <hr>
 <h2 id="代码血缘关系汇总表"><a href="#代码血缘关系汇总表" class="headerlink" title="代码血缘关系汇总表"></a>代码血缘关系汇总表</h2><table>
