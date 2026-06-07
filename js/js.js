@@ -11,7 +11,10 @@ new Valine({
 })
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('pre').forEach((block) => {
+    document.querySelectorAll('pre code').forEach((block) => {
+        if (block.closest('pre.doc-code-block') || block.closest('figure.highlight') || block.classList.contains('hljs')) {
+            return;
+        }
         hljs.highlightBlock(block);
     });
 });
